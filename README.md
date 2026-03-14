@@ -2,53 +2,54 @@
 
 Backend for a restaurant reservation and online ordering system.
 
-This project includes authentication, order management, reservations, and an admin interface for managing menu items.
+This project includes authentication, online ordering, reservations, an admin panel for menu management, and a chatbot assistant for customer support.
 
-Live API  
+## Live Demo
+
 https://roka-restaurant-9bzp.onrender.com
 
 ## Features
 
-- User authentication with JWT
+- JWT-based authentication
 - Role-based access (Customer / Manager)
 - Online ordering system
 - Reservation management
 - Admin panel for menu management
-- Chatbot assistant for menu and reservation help
+- Chatbot assistant for menu and reservation support
+- RESTful API design
+- Cloud database integration with MongoDB Atlas
+- Dockerized backend setup
+- Deployment on Render
 
 ## Tech Stack
 
-Node.js  
-Express.js  
-MongoDB Atlas  
-EJS  
-Render
+- Node.js
+- Express.js
+- MongoDB Atlas
+- EJS
+- Docker
+- Render
 
-## API Endpoints
+## Main Endpoints
 
-Authentication
-POST /api/users/register  
-POST /api/users/login  
+### Auth
+- POST /api/users/register
+- POST /api/users/login
 
-Orders
-POST /api/orders  
-GET /api/orders/myorders  
+### Orders
+- POST /api/orders
+- GET /api/orders/myorders
 
-Reservations
-POST /api/reservations  
-GET /api/reservations/myreservations  
+### Reservations
+- POST /api/reservations
+- GET /api/reservations/myreservations
 
-## Deployment
+## Status
 
-The backend is deployed on Render and connected to a MongoDB Atlas database.
+The project is live and still being improved with new features.
 
-## Future Improvements
-
-- Payment integration
-- Docker containerization
-- API documentation (Swagger)
-## Future Improvements
+## Planned Improvements
 
 - Payment integration
-- Docker containerization
-- API documentation (Swagger)
+- Swagger documentation
+- Container-based deployment improvements

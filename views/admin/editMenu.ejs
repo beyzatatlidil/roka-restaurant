@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Menu Item</title>
+</head>
+<body>
+  <h1>Edit Menu Item</h1>
+
+  <form action="/admin/menu/edit/<%= menuItem._id %>" method="POST">
+    <div>
+      <label>Name:</label>
+      <input type="text" name="name" value="<%= menuItem.name %>" required />
+    </div>
+
+    <br>
+
+    <div>
+      <label>Description:</label>
+      <textarea name="description"><%= menuItem.description %></textarea>
+    </div>
+
+    <br>
+
+    <div>
+      <label>Price:</label>
+      <input type="number" name="price" value="<%= menuItem.price %>" required />
+    </div>
+
+    <br>
+
+    <div>
+      <label>Category:</label>
+      <input type="text" name="category" value="<%= menuItem.category %>" required />
+    </div>
+
+    <br>
+
+    <div>
+      <label>Image URL:</label>
+      <input type="text" name="image" value="<%= menuItem.image %>" />
+    </div>
+
+    <br>
+
+    <button type="submit">Update Item</button>
+  </form>
+
+  <br>
+  <a href="/admin/menu">Back to Menu</a>
+</body>
+</html>

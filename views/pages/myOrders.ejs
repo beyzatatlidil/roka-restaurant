@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders | ROKA</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1100px;
+      margin: 40px auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .topbar h1 {
+      font-size: 32px;
+    }
+
+    .topbar a {
+      text-decoration: none;
+      background: #111827;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .topbar a:hover {
+      background: #f59e0b;
+      color: #111827;
+    }
+
+    .orders-grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .order-card {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      padding: 22px;
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .order-header h3 {
+      font-size: 20px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+
+    .pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .preparing {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .out-for-delivery {
+      background: #ede9fe;
+      color: #6d28d9;
+    }
+
+    .delivered {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .cancelled {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .meta {
+      color: #6b7280;
+      margin-bottom: 14px;
+      line-height: 1.7;
+    }
+
+    .items-box {
+      background: #f9fafb;
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .items-box h4 {
+      margin-bottom: 10px;
+    }
+
+    .items-box ul {
+      padding-left: 18px;
+    }
+
+    .items-box li {
+      margin-bottom: 8px;
+    }
+
+    .empty-box,
+    .error-box,
+    .loading-box {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      padding: 40px;
+      text-align: center;
+      color: #6b7280;
+    }
+
+    .error-box {
+      color: #991b1b;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="topbar">
+      <h1>My Orders</h1>
+      <a href="/menu">← Back to Menu</a>
+    </div>
+
+    <div id="content">
+      <div class="loading-box">Loading your orders...</div>
+    </div>
+  </div>
+
+  <script>
+    async function loadMyOrders() {
+      const content = document.getElementById("content");
+     
+
+      try {
+       const response = await fetch("/api/orders/myorders");
+        const data = await response.json();
+
+        if (!response.ok) {
+          content.innerHTML = `
+            <div class="error-box">
+              <h3>Could not load orders</h3>
+              <p>${data.message || "Access denied"}</p>
+            </div>
+          `;
+          return;
+        }
+
+        const orders = data.orders || [];
+
+        if (orders.length === 0) {
+          content.innerHTML = `
+            <div class="empty-box">
+              <h3>No orders yet</h3>
+              <p>Your placed orders will appear here.</p>
+            </div>
+          `;
+          return;
+        }
+
+        content.innerHTML = `
+          <div class="orders-grid">
+            ${orders.map(order => `
+              <div class="order-card">
+                <div class="order-header">
+                  <h3>Order #${String(order._id).slice(-6).toUpperCase()}</h3>
+                  <span class="status-badge ${getStatusClass(order.status)}">
+                    ${order.status || "pending"}
+                  </span>
+                </div>
+
+                <div class="meta">
+                  <p><strong>Total:</strong> ${order.totalPrice || 0} TL</p>
+                  <p><strong>Address:</strong> ${order.deliveryAddress || "No address"}</p>
+                  <p><strong>Phone:</strong> ${order.phone || "No phone"}</p>
+                  <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
+                </div>
+
+                <div class="items-box">
+                  <h4>Items</h4>
+                  <ul>
+                    ${(order.orderItems || []).map(item => `
+                      <li>
+                        <strong>${item.name}</strong> —
+                        Qty: ${item.quantity} —
+                        Price: ${item.price} TL
+                      </li>
+                    `).join("")}
+                  </ul>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      } catch (error) {
+        content.innerHTML = `
+          <div class="error-box">
+            <h3>Something went wrong</h3>
+            <p>${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    function getStatusClass(status) {
+      if (status === "pending") return "pending";
+      if (status === "preparing") return "preparing";
+      if (status === "out for delivery") return "out-for-delivery";
+      if (status === "delivered") return "delivered";
+      if (status === "cancelled") return "cancelled";
+      return "pending";
+    }
+
+    loadMyOrders();
+  </script>
+
+</body>
+</html>

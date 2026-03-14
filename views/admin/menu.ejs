@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin | Menu Management</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+    .sidebar {
+      width: 240px;
+      height: 100vh;
+      background: #111827;
+      color: white;
+      position: fixed;
+      left: 0;
+      top: 0;
+      padding: 30px 20px;
+    }
+
+    .sidebar h2 {
+      font-size: 24px;
+      margin-bottom: 35px;
+      text-align: center;
+    }
+
+    .sidebar a {
+      display: block;
+      color: #d1d5db;
+      text-decoration: none;
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      transition: 0.25s;
+      font-weight: bold;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #f59e0b;
+      color: #111827;
+    }
+
+    .main {
+      margin-left: 240px;
+      padding: 35px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .topbar h1 {
+      font-size: 32px;
+      color: #111827;
+    }
+
+    .topbar p {
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .add-btn {
+      background: #f59e0b;
+      color: #111827;
+      text-decoration: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-weight: bold;
+      transition: 0.25s;
+      display: inline-block;
+    }
+
+    .add-btn:hover {
+      opacity: 0.9;
+    }
+
+    .table-card {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #f9fafb;
+    }
+
+    th, td {
+      padding: 18px 16px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      vertical-align: middle;
+    }
+
+    th {
+      font-size: 14px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      font-size: 15px;
+    }
+
+    .product-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .product-image {
+      width: 58px;
+      height: 58px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #e5e7eb;
+    }
+
+    .product-placeholder {
+      width: 58px;
+      height: 58px;
+      border-radius: 10px;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .product-name {
+      font-weight: bold;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .product-desc {
+      color: #6b7280;
+      font-size: 13px;
+      max-width: 280px;
+    }
+
+    .category-badge {
+      display: inline-block;
+      background: #fef3c7;
+      color: #92400e;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .price {
+      font-weight: bold;
+      color: #111827;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .edit-btn,
+    .delete-btn {
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .edit-btn {
+      background: #111827;
+      color: white;
+    }
+
+    .delete-btn {
+      background: #dc2626;
+      color: white;
+    }
+
+    .empty-box {
+      padding: 40px;
+      text-align: center;
+      color: #6b7280;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+
+      .main {
+        margin-left: 0;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        border-bottom: 1px solid #eee;
+        padding: 15px;
+      }
+
+      td {
+        border: none;
+        padding: 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <h2>ROKA Admin</h2>
+    <a href="/admin">Dashboard</a>
+    <a href="/admin/orders">Orders</a>
+    <a href="/admin/reservations">Reservations</a>
+    <a href="/admin/menu" class="active">Menu</a>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1>Menu Management</h1>
+        <p>Manage your restaurant menu items from one place.</p>
+      </div>
+
+      <a href="/admin/menu/new" class="add-btn">+ Add New Item</a>
+    </div>
+
+    <div class="table-card">
+      <% if (!menuItems || menuItems.length === 0) { %>
+        <div class="empty-box">
+          <h3>No menu items found</h3>
+          <p>Add your first product to start building the restaurant menu.</p>
+        </div>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% menuItems.forEach(item => { %>
+              <tr>
+                <td>
+                  <div class="product-info">
+                    <% if (item.image) { %>
+                      <img src="<%= item.image %>" alt="<%= item.name %>" class="product-image">
+                    <% } else { %>
+                      <div class="product-placeholder">No Img</div>
+                    <% } %>
+
+                    <div>
+                      <div class="product-name"><%= item.name %></div>
+                      <div class="product-desc">
+                        <%= item.description || "No description available." %>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <span class="category-badge"><%= item.category %></span>
+                </td>
+
+                <td class="price"><%= item.price %> TL</td>
+
+                <td>
+                  <div class="actions">
+                    <a href="/admin/menu/edit/<%= item._id %>" class="edit-btn">Edit</a>
+
+                    <form action="/admin/menu/delete/<%= item._id %>" method="POST" style="display:inline;">
+                      <button type="submit" class="delete-btn">Delete</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </main>
+
+</body>
+</html>

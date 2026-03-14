@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Reservations | Roka Restaurant</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <div class="logo">Roka <span>Restaurant</span></div>
+
+      <div class="nav-links">
+        <a href="/">Menu</a>
+        <a href="/reservation">Reservation</a>
+        <a href="/my-orders">My Orders</a>
+        <a href="/my-reservations">My Reservations</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom: 20px;">
+      <div class="hero-grid">
+        <div class="hero-text">
+          <h1>Find Your Reservation Easily.</h1>
+          <p>
+            Enter your phone number to view your restaurant reservations,
+            booking details, and reservation status.
+          </p>
+
+          <div class="hero-stats">
+            <div class="stat-card">
+              <h3>Quick</h3>
+              <p>Reservation Lookup</p>
+            </div>
+
+            <div class="stat-card">
+              <h3>Live</h3>
+              <p>Status Tracking</p>
+            </div>
+
+            <div class="stat-card">
+              <h3>Simple</h3>
+              <p>Phone Search</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div
+            class="hero-panel"
+            style="
+              background:
+                linear-gradient(rgba(12, 14, 18, 0.30), rgba(12, 14, 18, 0.60)),
+                url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=80')
+                center/cover no-repeat;
+            "
+          >
+            <div class="hero-overlay-card">
+              <span class="hero-badge">Reservation Lookup</span>
+              <h4>Track Your Booking Details</h4>
+              <p>
+                Search by phone number and instantly see your reservation date,
+                time, guest count, and current status.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-header" style="margin-top: 10px;">
+      <div>
+        <h2>Search Reservation</h2>
+        <p>Use the same phone number you entered while creating your reservation.</p>
+      </div>
+    </section>
+
+    <section class="reservation-layout">
+      <div class="reservation-card">
+        <form class="reservation-form" method="POST" action="/my-reservations">
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input
+              type="text"
+              id="phone"
+              name="phone"
+              placeholder="Enter your phone number"
+              required
+            />
+          </div>
+
+          <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
+            <button type="submit" class="btn btn-primary">Search Reservation</button>
+            <a href="/reservation" class="btn btn-secondary">New Reservation</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="reservation-side">
+        <div class="info-box">
+          <h4>Tip</h4>
+          <p>
+            Enter the exact same phone number you used when creating the reservation.
+          </p>
+        </div>
+
+        <div class="info-box">
+          <h4>Status Info</h4>
+          <p>
+            Pending means your reservation is created. Confirmed means it is approved.
+          </p>
+        </div>
+
+        <div class="info-box">
+          <h4>Need a New Booking?</h4>
+          <p>
+            You can always return to the reservation page and create another booking.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <% if (reservations) { %>
+      <section class="section-header">
+        <div>
+          <h2>Your Reservations</h2>
+          <p>Here are the reservations matching your phone number.</p>
+        </div>
+      </section>
+
+      <% if (reservations.length === 0) { %>
+        <div class="empty-message reservation-empty">
+          <h3>No Reservations Found</h3>
+          <p>
+            We could not find any reservation with this phone number.
+            Please check the number and try again.
+          </p>
+        </div>
+      <% } else { %>
+        <section class="reservation-results-grid">
+          <% reservations.forEach(r => { %>
+            <div class="reservation-result-card">
+              <div class="reservation-result-top">
+                <h3>Reservation</h3>
+                <span class="status-badge status-<%= r.status %>">
+                  <%= r.status %>
+                </span>
+              </div>
+
+              <div class="reservation-result-body">
+                <div class="reservation-item">
+                  <span>Date</span>
+                  <strong><%= r.date %></strong>
+                </div>
+
+                <div class="reservation-item">
+                  <span>Time</span>
+                  <strong><%= r.time %></strong>
+                </div>
+
+                <div class="reservation-item">
+                  <span>Guests</span>
+                  <strong><%= r.guests %></strong>
+                </div>
+
+                <div class="reservation-item">
+                  <span>Phone</span>
+                  <strong><%= r.phone %></strong>
+                </div>
+
+                <div class="reservation-item full">
+                  <span>Special Request</span>
+                  <strong><%= r.specialRequest || "No special request" %></strong>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </section>
+      <% } %>
+    <% } %>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 Roka Restaurant — Reservation tracking experience.</p>
+    </div>
+  </footer>
+</body>
+</html>

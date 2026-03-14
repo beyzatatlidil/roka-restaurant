@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Roka Restaurant | Checkout</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body{
+      background:#f7f7f7;
+    }
+
+    .navbar{
+      background:#111;
+      color:white;
+      padding:18px 40px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .navbar a{
+      color:white;
+      text-decoration:none;
+      margin-left:20px;
+      font-weight:bold;
+    }
+
+    .container{
+      width:90%;
+      max-width:700px;
+      margin:50px auto;
+      background:white;
+      padding:30px;
+      border-radius:10px;
+      box-shadow:0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    h1{
+      margin-bottom:25px;
+    }
+
+    .form-group{
+      margin-bottom:18px;
+    }
+
+    label{
+      display:block;
+      margin-bottom:8px;
+      font-weight:bold;
+    }
+
+    input, textarea, select{
+      width:100%;
+      padding:12px;
+      border:1px solid #ccc;
+      border-radius:8px;
+      font-size:15px;
+    }
+
+    .summary{
+      background:#fafafa;
+      border:1px solid #eee;
+      border-radius:8px;
+      padding:16px;
+      margin:20px 0;
+    }
+
+    .summary h3{
+      margin-bottom:12px;
+    }
+
+    .summary-item{
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:8px;
+    }
+
+    .total{
+      margin-top:12px;
+      font-size:20px;
+      font-weight:bold;
+      text-align:right;
+    }
+
+    .btn{
+      width:100%;
+      border:none;
+      background:#f59e0b;
+      color:black;
+      padding:14px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:bold;
+      font-size:16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div><strong>ROKA Restaurant</strong></div>
+    <div>
+      <a href="/">Home</a>
+      <a href="/menu">Menu</a>
+      <a href="/cart">Cart</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Checkout</h1>
+
+    <form id="checkout-form">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="name" required />
+      </div>
+
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="text" id="phone" required />
+      </div>
+
+      <div class="form-group">
+        <label>Delivery Address</label>
+        <textarea id="address" rows="4" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Payment Method</label>
+        <select id="paymentMethod" required>
+          <option value="Cash">Cash</option>
+          <option value="Card">Card</option>
+        </select>
+      </div>
+
+      <div class="summary">
+        <h3>Order Summary</h3>
+        <div id="summary-items"></div>
+        <div class="total" id="summary-total"></div>
+      </div>
+
+      <button type="submit" class="btn">Place Order</button>
+    </form>
+  </div>
+
+  <script>
+    function renderSummary() {
+      const summaryItems = document.getElementById("summary-items");
+      const summaryTotal = document.getElementById("summary-total");
+
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      if (cart.length === 0) {
+        summaryItems.innerHTML = "<p>Your cart is empty.</p>";
+        summaryTotal.innerHTML = "Total: 0 TL";
+        return;
+      }
+
+      let total = 0;
+
+      summaryItems.innerHTML = cart.map(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        return `
+          <div class="summary-item">
+            <span>${item.name} x ${item.quantity}</span>
+            <span>${itemTotal} TL</span>
+          </div>
+        `;
+      }).join("");
+
+      summaryTotal.innerHTML = `Total: ${total} TL`;
+    }
+
+    document.getElementById("checkout-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+
+      const token = localStorage.getItem("token");
+
+     document.getElementById("checkout-form").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  if (cart.length === 0) {
+    alert("Your cart is empty!");
+    return;
+  }
+
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const address = document.getElementById("address").value;
+  const paymentMethod = document.getElementById("paymentMethod").value;
+
+  const totalPrice = cart.reduce((sum, item) => {
+    return sum + item.price * item.quantity;
+  }, 0);
+
+  const orderData = {
+    orderItems: cart.map(item => ({
+      menuItem: item.id,
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price
+    })),
+    totalPrice,
+    deliveryAddress: address,
+    paymentMethod,
+    customerName: name,
+    phone
+  };
+
+  try {
+    const response = await fetch("/api/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(orderData)
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("Order placed successfully!");
+      localStorage.removeItem("cart");
+      window.location.href = "/menu";
+    } else {
+      alert(data.message || "Order could not be created.");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong while creating the order.");
+  }
+});
+
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const address = document.getElementById("address").value;
+      const paymentMethod = document.getElementById("paymentMethod").value;
+
+      const totalPrice = cart.reduce((sum, item) => {
+        return sum + item.price * item.quantity;
+      }, 0);
+
+      const orderData = {
+        orderItems: cart.map(item => ({
+          menuItem: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        totalPrice,
+        deliveryAddress: address,
+        paymentMethod,
+        customerName: name,
+        phone
+      };
+
+      try {
+        const response = await fetch("/api/orders", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(orderData)
+        });
+
+        const data = await response.json();
+
+       if (response.ok) {
+  alert("Order placed successfully!");
+  localStorage.removeItem("cart");
+  window.location.href = "/menu";
+} else {
+  alert((data.message || "Order could not be created.") + " | " + (data.error || ""));
+}
+      } catch (error) {
+        console.error(error);
+        alert("Something went wrong while creating the order.");
+      }
+    });
+
+    renderSummary();
+  </script>
+
+</body>
+</html>

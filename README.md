@@ -1,45 +1,54 @@
 # Roka Restaurant API
 
-Backend API for a restaurant reservation and ordering system.
+Backend for a restaurant reservation and online ordering system.
+
+This project includes authentication, order management, reservations, and an admin interface for managing menu items.
+
+Live API  
+https://roka-restaurant-9bzp.onrender.com
 
 ## Features
 
-- User authentication (JWT)
-- Order management
-- Reservation system
-- Admin order status update
+- User authentication with JWT
+- Role-based access (Customer / Manager)
+- Online ordering system
+- Reservation management
+- Admin panel for menu management
+- Chatbot assistant for menu and reservation help
 
-## Technologies
+## Tech Stack
 
-- Node.js
-- Express.js
-- MongoDB
-- JWT Authentication
+Node.js  
+Express.js  
+MongoDB Atlas  
+EJS  
+Render
 
 ## API Endpoints
 
-### Authentication
-
+Authentication
 POST /api/users/register  
 POST /api/users/login  
 
-### Orders
-
+Orders
 POST /api/orders  
 GET /api/orders/myorders  
 
-### Reservations
-
+Reservations
 POST /api/reservations  
 GET /api/reservations/myreservations  
 
-## Project Status
+## Deployment
 
-🚧 Under Development
+The backend is deployed on Render and connected to a MongoDB Atlas database.
 
 ## Future Improvements
 
 - Payment integration
-- Admin dashboard
-- Deployment
-- Frontend improvements
+- Docker containerization
+- API documentation (Swagger)
+## Future Improvements
+
+- Payment integration
+- Docker containerization
+- API documentation (Swagger)

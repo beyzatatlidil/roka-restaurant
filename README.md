@@ -2,54 +2,181 @@
 
 Backend for a restaurant reservation and online ordering system.
 
-This project includes authentication, online ordering, reservations, an admin panel for menu management, and a chatbot assistant for customer support.
-
-## Live Demo
-
+Live Demo:  
 https://roka-restaurant-9bzp.onrender.com
 
-## Features
+This project provides a RESTful backend for managing restaurant reservations, online orders, menu items, and user authentication. It also includes a chatbot assistant that helps customers with menu information and reservation questions.
 
-- JWT-based authentication
-- Role-based access (Customer / Manager)
+---
+
+# Features
+
+- JWT-based authentication system
+- Role-based access control (Customer / Manager)
 - Online ordering system
 - Reservation management
 - Admin panel for menu management
-- Chatbot assistant for menu and reservation support
-- RESTful API design
+- Chatbot assistant for menu and reservation queries
+- RESTful API architecture
 - Cloud database integration with MongoDB Atlas
 - Dockerized backend setup
 - Deployment on Render
 
-## Tech Stack
+---
 
-- Node.js
-- Express.js
-- MongoDB Atlas
-- EJS
-- Docker
-- Render
+# Tech Stack
 
-## Main Endpoints
+Backend  
+- Node.js  
+- Express.js  
 
-### Auth
-- POST /api/users/register
-- POST /api/users/login
+Database  
+- MongoDB Atlas  
 
-### Orders
-- POST /api/orders
-- GET /api/orders/myorders
+Frontend Rendering  
+- EJS  
 
-### Reservations
-- POST /api/reservations
-- GET /api/reservations/myreservations
+Infrastructure  
+- Docker  
+- Render  
 
-## Status
+Authentication  
+- JSON Web Token (JWT)
 
-The project is live and still being improved with new features.
+---
 
-## Planned Improvements
+# Live Deployment
 
-- Payment integration
-- Swagger documentation
-- Container-based deployment improvements
+The backend is deployed on Render and connected to MongoDB Atlas.
+
+Production URL
+
+https://roka-restaurant-9bzp.onrender.com
+
+---
+
+# API Endpoints
+
+## Authentication
+
+Register user
+
+POST /api/auth/register
+
+Login
+
+POST /api/auth/login
+
+---
+
+## Orders
+
+Create order
+
+POST /api/orders
+
+Get user orders
+
+GET /api/orders/myorders
+
+---
+
+## Reservations
+
+Create reservation
+
+POST /api/reservations
+
+Get user reservations
+
+GET /api/reservations/myreservations
+
+---
+
+## Menu
+
+Get menu items
+
+GET /api/menu
+
+Add menu item (admin)
+
+POST /api/menu
+
+---
+
+# Chatbot Assistant
+
+The system integrates a chatbot built using StackAI to assist users with:
+
+- Menu information
+- Reservation questions
+- Basic navigation of the ordering system
+
+The chatbot improves the user experience by helping customers quickly find relevant information.
+
+---
+
+# Docker Setup
+
+This project supports running the backend inside a Docker container.
+
+Build the Docker image
+
+```bash
+docker build -t roka-restaurant .
+```
+
+Run the container
+
+```bash
+docker run -p 3000:3000 roka-restaurant
+```
+
+Then open:
+
+```
+http://localhost:3000
+```
+
+---
+
+# Local Development
+
+Install dependencies
+
+```bash
+npm install
+```
+
+Run development server
+
+```bash
+npm run dev
+```
+
+---
+
+# Project Status
+
+The project is currently live and functional.  
+New improvements are planned to expand the system.
+
+---
+
+# Future Improvements
+
+Planned features for the next versions:
+
+- Swagger API documentation
+- Payment system integration (Stripe test environment)
+- Improved admin dashboard
+- Order status tracking
+- API rate limiting
+- Better chatbot responses
+
+---
+
+# Author
+
+Beyza Tatlıdil

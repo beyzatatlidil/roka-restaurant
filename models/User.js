@@ -5,42 +5,35 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "İsim zorunludur"],
-      trim: true,
+      required: [true, "İsim gerekli"],
     },
     email: {
       type: String,
-      required: [true, "Email zorunludur"],
+      required: [true, "Email gerekli"],
       unique: true,
-      trim: true,
-      lowercase: true,
     },
     password: {
       type: String,
-      required: [true, "Şifre zorunludur"],
-      minlength: 6,
+      required: [true, "Şifre gerekli"],
     },
     role: {
       type: String,
-      enum: ["customer", "admin"],
+      enum: ["customer", "manager"],
       default: "customer",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-// Şifreyi kaydetmeden önce hashle
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    return next();
-  }
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
 });
 
-// Girilen şifre ile hashlenmiş şifreyi karşılaştır
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

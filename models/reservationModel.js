@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 const reservationSchema = new mongoose.Schema(
   {
   user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      
     date: {
       type: String,
       required: true,

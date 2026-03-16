@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 const axios = require("axios");
+const Reservation = require("./models/reservationModel");
 
 const connectDB = require("./config/db");
 const orderRoutes = require("./routes/orderRoutes");
@@ -12,7 +13,6 @@ const adminRoutes = require("./routes/adminRoutes");
 const menuPageRoutes = require("./routes/menuPageRoutes");
 const { getMyOrdersPage } = require("./controllers/orderController");
 const chatRoutes = require("./routes/chatRoutes");
-
 
 dotenv.config();
 connectDB();
@@ -54,54 +54,31 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.get("/reservation", (req, res) => {
-  const success = req.query.success;
-  const error = req.query.error;
-
-  res.render("pages/reservation", { success, error });
-});
-
-app.get("/my-reservations", (req, res) => {
-  res.render("pages/myReservations", { reservations: null });
-});
-
-app.post("/my-reservations", async (req, res) => {
-  const { phone } = req.body;
-
+app.get("/my-reservations", async (req, res) => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/reservations/phone/${phone}`);
+    const phone = req.query.phone;
 
-    res.render("pages/myReservations", {
-      reservations: response.data
-    });
+    if (!phone) {
+      return res.render("pages/myReservations", { reservations: null });
+    }
 
+    const reservations = await Reservation.find({ phone }).sort({ createdAt: -1 });
+
+    return res.render("pages/myReservations", { reservations });
   } catch (error) {
-    console.error(error.message);
-    res.render("pages/myReservations", { reservations: [] });
+    console.error("MY RESERVATIONS PAGE ERROR:", error.message);
+    return res.render("pages/myReservations", { reservations: [] });
   }
 });
 
-app.post("/reservation", async (req, res) => {
-  try {
-    const { date, time, guests, phone, specialRequest } = req.body;
-
-    await axios.post("http://localhost:3000/api/reservations", {
-      date,
-      time,
-      guests,
-      phone,
-      specialRequest,
-    });
-
-    res.redirect("/reservation?success=true");
-  } catch (error) {
-    console.error(
-      "Reservation error full:",
-      error.response?.data || error.message
-    );
-    res.redirect("/reservation?error=true");
-  }
+app.get("/login", (req, res) => {
+  res.render("pages/login");
 });
+
+app.get("/login", (req, res) => {
+  res.render("pages/login");
+});
+
 
 app.get("/admin", (req, res) => {
   res.render("pages/admin");

@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const Reservation = require("../models/reservationModel");
 
 const {
   createReservation,
@@ -8,25 +7,27 @@ const {
   getAllReservations,
   deleteReservation,
   updateReservationStatus,
+  getReservationsByPhone,
 } = require("../controllers/reservationController");
 
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
-router.post("/", createReservation);router.get("/my", protect, getMyReservations);
+// Guest de rezervasyon oluşturabilsin
+router.post("/", createReservation);
+
+// Giriş yapan kullanıcı kendi rezervasyonlarını görsün
+router.get("/my", protect, getMyReservations);
+
+// Admin tüm rezervasyonları görsün
 router.get("/", protect, adminOnly, getAllReservations);
-router.delete("/:id", protect, deleteReservation);
+
+// Admin rezervasyon durumunu güncellesin
 router.put("/:id/status", protect, adminOnly, updateReservationStatus);
 
-router.get("/phone/:phone", async (req, res) => {
-  try {
-    const reservations = await Reservation.find({ phone: req.params.phone });
+// Kullanıcı kendi rezervasyonunu, admin ise her rezervasyonu silebilsin
+router.delete("/:id", protect, deleteReservation);
 
-    res.json(reservations);
-  } catch (error) {
-    res.status(500).json({
-      message: "Failed to fetch reservations"
-    });
-  }
-});
+router.get("/search", getReservationsByPhone);
+
 
 module.exports = router;

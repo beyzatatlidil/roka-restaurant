@@ -2,47 +2,47 @@ const Reservation = require("../models/reservationModel");
 
 const createReservation = async (req, res) => {
   try {
-      const { date, time, guests, phone, specialRequest } = req.body;
-      
-      
-    if (!date || !time || !guests) {
+    const { date, time, guests, phone, specialRequest } = req.body;
+
+    if (!date || !time || !guests || !phone) {
       return res.status(400).json({
-        message: "Date, time and guests are required",
+        message: "Date, time, guests and phone are required",
       });
     }
-      
-      if (!date || !time || !guests || !phone) {
-        return res.status(400).json({
-          message: "Date, time, guests and phone are required",
-        });
-      }
-      
-      const existingReservations = await Reservation.countDocuments({
-        date,
-        time,
-      });
 
-      if (existingReservations >= 10) {
-        return res.status(400).json({
-          message: "Restaurant is fully booked for this time slot",
-        });
-      }
+    const existingReservations = await Reservation.countDocuments({
+      date,
+      time,
+    });
 
-      const reservation = await Reservation.create({
-        date,
-        time,
-        guests,
-        phone,
-        specialRequest,
+    if (existingReservations >= 10) {
+      return res.status(400).json({
+        message: "Restaurant is fully booked for this time slot",
       });
-      
-      
-    res.status(201).json({
+    }
+
+    const reservationData = {
+      date,
+      time,
+      guests,
+      phone,
+      specialRequest,
+    };
+
+    // Kullanıcı giriş yaptıysa rezervasyonu user'a bağla
+    if (req.user) {
+      reservationData.user = req.user._id;
+    }
+
+    const reservation = await Reservation.create(reservationData);
+
+    return res.status(201).json({
       message: "Reservation created successfully",
       reservation,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("CREATE RESERVATION ERROR:", error);
+    return res.status(500).json({
       message: "Failed to create reservation",
       error: error.message,
     });
@@ -55,12 +55,12 @@ const getMyReservations = async (req, res) => {
       createdAt: -1,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "My reservations fetched successfully",
       reservations,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Failed to fetch user reservations",
       error: error.message,
     });
@@ -73,12 +73,12 @@ const getAllReservations = async (req, res) => {
       .populate("user", "name email role")
       .sort({ createdAt: -1 });
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "All reservations fetched successfully",
       reservations,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Failed to fetch all reservations",
       error: error.message,
     });
@@ -96,6 +96,7 @@ const deleteReservation = async (req, res) => {
     }
 
     if (
+      reservation.user &&
       reservation.user.toString() !== req.user._id.toString() &&
       req.user.role !== "admin"
     ) {
@@ -106,12 +107,32 @@ const deleteReservation = async (req, res) => {
 
     await reservation.deleteOne();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Reservation deleted successfully",
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Failed to delete reservation",
+      error: error.message,
+    });
+  }
+};
+
+const getReservationsByPhone = async (req, res) => {
+  try {
+    const { phone } = req.query;
+
+    const reservations = await Reservation.find({ phone }).sort({
+      createdAt: -1,
+    });
+
+    return res.status(200).json({
+      message: "Reservations fetched successfully",
+      reservations,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to fetch reservations by phone",
       error: error.message,
     });
   }
@@ -133,12 +154,12 @@ const updateReservationStatus = async (req, res) => {
 
     await reservation.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Reservation status updated successfully",
       reservation,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Failed to update reservation status",
       error: error.message,
     });
@@ -151,4 +172,5 @@ module.exports = {
   getAllReservations,
   deleteReservation,
   updateReservationStatus,
+  getReservationsByPhone,
 };

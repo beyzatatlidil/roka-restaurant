@@ -15,6 +15,9 @@ const { protect, adminOnly } = require("../middleware/authMiddleware");
 // Guest de rezervasyon oluşturabilsin
 router.post("/", createReservation);
 
+// Telefon numarasıyla rezervasyon arama
+router.get("/search", getReservationsByPhone);
+
 // Giriş yapan kullanıcı kendi rezervasyonlarını görsün
 router.get("/my", protect, getMyReservations);
 
@@ -26,8 +29,5 @@ router.put("/:id/status", protect, adminOnly, updateReservationStatus);
 
 // Kullanıcı kendi rezervasyonunu, admin ise her rezervasyonu silebilsin
 router.delete("/:id", protect, deleteReservation);
-
-router.get("/search", getReservationsByPhone);
-
 
 module.exports = router;

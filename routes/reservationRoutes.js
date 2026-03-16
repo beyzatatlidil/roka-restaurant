@@ -14,7 +14,6 @@ const { protect, adminOnly } = require("../middleware/authMiddleware");
 
 // Guest de rezervasyon oluşturabilsin
 router.post("/", createReservation);
-
 // Telefon numarasıyla rezervasyon arama
 router.get("/search", getReservationsByPhone);
 

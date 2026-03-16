@@ -54,6 +54,10 @@ app.get("/", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.render("pages/menu");
+});
+
 app.get("/reservation", (req, res) => {
   res.render("pages/reservation");
 });

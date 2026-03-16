@@ -1,35 +1,90 @@
 const Reservation = require("../models/reservationModel");
+const generateReservationCode = require("../utils/generateReservationCode");
 
 const createReservation = async (req, res) => {
   try {
-    const { date, time, guests, phone, specialRequest } = req.body;
+    const { name, date, time, guests, phone, specialRequest } = req.body;
 
-    if (!date || !time || !guests || !phone) {
+    console.log("REQ BODY:", req.body);
+
+    if (!name || !date || !time || !guests || !phone) {
       return res.status(400).json({
-        message: "Date, time, guests and phone are required",
+        message: "Name, date, time, guests and phone are required",
       });
     }
 
-    const existingReservations = await Reservation.countDocuments({
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = String(today.getMonth() + 1).padStart(2, "0");
+    const currentDay = String(today.getDate()).padStart(2, "0");
+    const todayStr = `${currentYear}-${currentMonth}-${currentDay}`;
+
+    console.log("DATE FROM FORM:", date);
+    console.log("TODAY STR:", todayStr);
+    console.log("DATE < TODAY ?", date < todayStr);
+    console.log("DATE === TODAY ?", date === todayStr);
+
+    if (date < todayStr) {
+      return res.status(400).json({
+        message: "Past dates cannot be selected",
+      });
+    }
+
+    if (date === todayStr) {
+      const currentHours = String(today.getHours()).padStart(2, "0");
+      const currentMinutes = String(today.getMinutes()).padStart(2, "0");
+      const currentTimeStr = `${currentHours}:${currentMinutes}`;
+
+      console.log("TIME FROM FORM:", time);
+      console.log("CURRENT TIME:", currentTimeStr);
+      console.log("TIME < CURRENT ?", time < currentTimeStr);
+
+      if (time < currentTimeStr) {
+        return res.status(400).json({
+          message: "Past time cannot be selected for today",
+        });
+      }
+    }
+
+    const duplicateReservation = await Reservation.findOne({
+      phone,
       date,
       time,
+      status: { $in: ["pending", "confirmed"] },
     });
 
-    if (existingReservations >= 10) {
+    if (duplicateReservation) {
+      return res.status(409).json({
+        message: "A reservation already exists for this phone number at the selected time",
+      });
+    }
+
+    const existingReservations = await Reservation.find({
+      date,
+      time,
+      status: { $in: ["pending", "confirmed"] },
+    });
+
+    const totalGuestsForSlot = existingReservations.reduce((sum, reservation) => {
+      return sum + Number(reservation.guests || 0);
+    }, 0);
+
+    if (totalGuestsForSlot + Number(guests) > 40) {
       return res.status(400).json({
         message: "Restaurant is fully booked for this time slot",
       });
     }
 
     const reservationData = {
+      name,
+      phone,
       date,
       time,
-      guests,
-      phone,
-      specialRequest,
+      guests: Number(guests),
+      specialRequest: specialRequest || "",
+      reservationCode: generateReservationCode(),
     };
 
-    // Kullanıcı giriş yaptıysa rezervasyonu user'a bağla
     if (req.user) {
       reservationData.user = req.user._id;
     }
@@ -97,6 +152,7 @@ const deleteReservation = async (req, res) => {
 
     if (
       reservation.user &&
+      req.user &&
       reservation.user.toString() !== req.user._id.toString() &&
       req.user.role !== "admin"
     ) {

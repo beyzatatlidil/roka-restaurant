@@ -12,14 +12,16 @@
     <div class="container navbar-inner">
       <div class="logo">Roka <span>Restaurant</span></div>
 
-<div class="nav-links">
-  <a href="/">Home</a>
-  <a href="/menu">Menu</a>
-  <a href="/reservation">Reservation</a>
-  <a href="/my-orders">My Orders</a>
-  <a href="/my-reservations">My Reservations</a>
-  <a href="/login">Login</a>
-</div>  </nav>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/reservation">Reservation</a>
+        <a href="/my-orders">My Orders</a>
+        <a href="/my-reservations">My Reservations</a>
+        <a href="/login">Login</a>
+      </div>
+    </div>
+  </nav>
 
   <main class="container">
     <section class="hero" style="padding-bottom: 20px;">
@@ -85,6 +87,17 @@
         <form class="reservation-form" id="reservationForm">
           <div class="form-grid">
             <div class="form-group">
+              <label for="name">Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Your Name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
               <label for="date">Date</label>
               <input type="date" id="date" name="date" required />
             </div>
@@ -101,6 +114,7 @@
                 id="guests"
                 name="guests"
                 min="1"
+                max="12"
                 placeholder="Enter guest count"
                 required
               />
@@ -171,6 +185,12 @@
   <script>
     const reservationForm = document.getElementById("reservationForm");
     const reservationMessage = document.getElementById("reservationMessage");
+    const dateInput = document.getElementById("date");
+
+    if (dateInput) {
+      const today = new Date().toISOString().split("T")[0];
+      dateInput.min = today;
+    }
 
     function showMessage(type, text) {
       reservationMessage.innerHTML = `
@@ -183,24 +203,23 @@
     reservationForm.addEventListener("submit", async function (e) {
       e.preventDefault();
 
-      
-
       const data = {
+        name: document.getElementById("name").value.trim(),
         date: document.getElementById("date").value,
         time: document.getElementById("time").value,
         guests: Number(document.getElementById("guests").value),
-        phone: document.getElementById("phone").value,
-        specialRequest: document.getElementById("specialRequest").value,
+        phone: document.getElementById("phone").value.trim(),
+        specialRequest: document.getElementById("specialRequest").value.trim(),
       };
 
       try {
-       const response = await fetch("/api/reservations", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(data),
-});
+        const response = await fetch("/api/reservations", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
 
         const result = await response.json();
 
@@ -208,8 +227,17 @@
           throw new Error(result.message || result.error || "Reservation could not be created.");
         }
 
-        showMessage("success", "Reservation created successfully.");
+        showMessage(
+          "success",
+          `Reservation created successfully. Your code: ${result.reservation.reservationCode}`
+        );
+
         reservationForm.reset();
+
+        if (dateInput) {
+          const today = new Date().toISOString().split("T")[0];
+          dateInput.min = today;
+        }
       } catch (error) {
         console.error("RESERVATION ERROR:", error);
         showMessage("error", error.message || "Reservation could not be created.");

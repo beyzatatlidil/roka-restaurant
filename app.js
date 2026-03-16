@@ -42,7 +42,15 @@ app.use("/api/reservations", reservationRoutes);
 app.get("/my-orders", getMyOrdersPage);
 
 // FRONTEND ROUTES
-app.get("/", async (req, res) => {
+app.get("/", (req, res) => {
+  res.render("pages/reservation");
+});
+
+app.get("/reservation", (req, res) => {
+  res.render("pages/reservation");
+});
+
+app.get("/menu", async (req, res) => {
   try {
     const response = await axios.get("http://localhost:3000/api/menu");
     const menuItems = response.data.menuItems || response.data;
@@ -52,14 +60,6 @@ app.get("/", async (req, res) => {
     console.error("Menu fetch error:", error.message);
     res.render("pages/menu", { menuItems: [] });
   }
-});
-
-app.get("/", (req, res) => {
-  res.render("pages/reservation");
-});
-
-app.get("/reservation", (req, res) => {
-  res.render("pages/reservation");
 });
 
 app.get("/my-reservations", async (req, res) => {

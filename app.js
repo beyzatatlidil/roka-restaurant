@@ -55,7 +55,7 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.render("pages/menu");
+  res.render("pages/reservation");
 });
 
 app.get("/reservation", (req, res) => {

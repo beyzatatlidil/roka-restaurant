@@ -54,6 +54,10 @@ app.get("/", async (req, res) => {
   }
 });
 
+app.get("/reservation", (req, res) => {
+  res.render("pages/reservation");
+});
+
 app.get("/my-reservations", async (req, res) => {
   try {
     const phone = req.query.phone;

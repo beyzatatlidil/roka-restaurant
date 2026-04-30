@@ -10,23 +10,19 @@ const {
   getReservationsByPhone,
 } = require("../controllers/reservationController");
 
-const { protect, adminOnly } = require("../middleware/authMiddleware");
+const { protect } = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
 
-// Guest de rezervasyon oluşturabilsin
+// Public
 router.post("/", createReservation);
-// Telefon numarasıyla rezervasyon arama
 router.get("/search", getReservationsByPhone);
 
-// Giriş yapan kullanıcı kendi rezervasyonlarını görsün
+// User
 router.get("/my", protect, getMyReservations);
-
-// Admin tüm rezervasyonları görsün
-router.get("/", protect, adminOnly, getAllReservations);
-
-// Admin rezervasyon durumunu güncellesin
-router.put("/:id/status", protect, adminOnly, updateReservationStatus);
-
-// Kullanıcı kendi rezervasyonunu, admin ise her rezervasyonu silebilsin
 router.delete("/:id", protect, deleteReservation);
+
+// Admin
+router.get("/", protect, adminMiddleware, getAllReservations);
+router.put("/:id/status", protect, adminMiddleware, updateReservationStatus);
 
 module.exports = router;

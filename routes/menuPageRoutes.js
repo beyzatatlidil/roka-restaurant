@@ -1,33 +1,37 @@
 const express = require("express");
 const router = express.Router();
-const Menu = require("../models/Menu");
+const axios = require("axios");
 
+// HOME
+router.get("/", (req, res) => {
+  res.render("pages/home");
+});
+
+// MENU
 router.get("/menu", async (req, res) => {
   try {
-    const menuItems = await Menu.find().sort({ createdAt: -1 });
+    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    const response = await axios.get(`${baseUrl}/api/menu`);
+    const menuItems = response.data.menuItems || response.data;
+
     res.render("pages/menu", { menuItems });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Menu page yüklenemedi");
+    res.render("pages/menu", { menuItems: [] });
   }
 });
 
+// CART PAGE
 router.get("/cart", (req, res) => {
-  try {
-    res.render("pages/cart");
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Cart page yüklenemedi");
-  }
+  res.render("pages/cart");
 });
 
-router.get("/checkout", (req, res) => {
-  try {
-    res.render("pages/checkout");
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Checkout page yüklenemedi");
-  }
+// RESERVATION PAGE
+router.get("/reservation", (req, res) => {
+  res.render("pages/reservation");
+});
+
+router.get("/login", (req, res) => {
+  res.render("pages/login");
 });
 
 module.exports = router;

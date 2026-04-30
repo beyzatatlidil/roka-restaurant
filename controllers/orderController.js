@@ -1,19 +1,20 @@
 const Order = require("../models/Order");
 
+// 🔥 CREATE ORDER
 const createOrder = async (req, res) => {
   try {
     const { orderItems, totalPrice, deliveryAddress, phone } = req.body;
 
     if (!orderItems || orderItems.length === 0) {
-      return res.status(400).json({
-        message: "Sipariş ürünleri boş olamaz",
-      });
+      return res.status(400).json({ message: "Sipariş ürünleri boş olamaz" });
     }
 
     if (!deliveryAddress) {
-      return res.status(400).json({
-        message: "Teslimat adresi zorunludur",
-      });
+      return res.status(400).json({ message: "Teslimat adresi zorunludur" });
+    }
+
+    if (!phone) {
+      return res.status(400).json({ message: "Telefon numarası zorunludur" });
     }
 
     const newOrder = await Order.create({
@@ -22,6 +23,7 @@ const createOrder = async (req, res) => {
       totalPrice,
       deliveryAddress,
       phone,
+      status: "pending",
     });
 
     return res.status(201).json({
@@ -36,16 +38,19 @@ const createOrder = async (req, res) => {
   }
 };
 
-// Geçici çözüm: token olmadan da siparişleri getirsin
-const getMyOrders = async (req, res) => {
+// 🔥 TELEFONA GÖRE
+const getOrdersByPhone = async (req, res) => {
   try {
-    const orders = await Order.find()
-      .populate("user", "name email")
-      .sort({ createdAt: -1 });
+    const { phone } = req.query;
+
+    if (!phone) {
+      return res.status(400).json({ message: "Telefon numarası gerekli" });
+    }
+
+    const orders = await Order.find({ phone }).sort({ createdAt: -1 });
 
     return res.status(200).json({
       message: "Siparişler getirildi",
-      count: orders.length,
       orders,
     });
   } catch (error) {
@@ -56,6 +61,19 @@ const getMyOrders = async (req, res) => {
   }
 };
 
+// 🔥 MY ORDERS PAGE (FIX)
+const getMyOrdersPage = async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
+
+    res.render("pages/myOrders", { orders });
+  } catch (error) {
+    console.error(error);
+    res.render("pages/myOrders", { orders: [] });
+  }
+};
+
+// 🔥 ADMIN
 const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
@@ -64,7 +82,6 @@ const getAllOrders = async (req, res) => {
 
     return res.status(200).json({
       message: "Tüm siparişler getirildi",
-      count: orders.length,
       orders,
     });
   } catch (error) {
@@ -75,6 +92,7 @@ const getAllOrders = async (req, res) => {
   }
 };
 
+// 🔥 STATUS UPDATE
 const updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -88,17 +106,13 @@ const updateOrderStatus = async (req, res) => {
     ];
 
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({
-        message: "Geçersiz sipariş durumu",
-      });
+      return res.status(400).json({ message: "Geçersiz sipariş durumu" });
     }
 
     const order = await Order.findById(req.params.id);
 
     if (!order) {
-      return res.status(404).json({
-        message: "Sipariş bulunamadı",
-      });
+      return res.status(404).json({ message: "Sipariş bulunamadı" });
     }
 
     order.status = status;
@@ -116,19 +130,10 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-const getMyOrdersPage = async (req, res) => {
-  try {
-    return res.render("pages/myOrders");
-  } catch (error) {
-    console.error("My Orders page error:", error);
-    return res.status(500).send("Server Error");
-  }
-};
-
 module.exports = {
   createOrder,
-  getMyOrders,
+  getOrdersByPhone,
+  getMyOrdersPage,
   getAllOrders,
   updateOrderStatus,
-  getMyOrdersPage,
 };

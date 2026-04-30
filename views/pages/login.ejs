@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login | Roka Restaurant</title>
   <link rel="stylesheet" href="/css/style.css" />
 </head>
+
 <body>
   <main class="container" style="max-width: 500px; margin-top: 60px;">
     <h1>Login</h1>
@@ -27,27 +29,34 @@
   </main>
 
   <script>
-    console.log("LOGIN SCRIPT RUNNING");
-
     const loginForm = document.getElementById("loginForm");
     const loginMessage = document.getElementById("loginMessage");
 
     function showMessage(type, text) {
       loginMessage.innerHTML = `
-        <div class="alert ${type === "success" ? "success-alert" : "error-alert"}">
+        <div style="
+          padding: 12px;
+          margin-bottom: 16px;
+          border-radius: 8px;
+          color: white;
+          background: ${type === "success" ? "#16a34a" : "#dc2626"};
+        ">
           ${text}
         </div>
       `;
     }
 
-    loginForm.addEventListener("submit", async function (e) {
+    loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      console.log("LOGIN FORM SUBMITTED");
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-      console.log("EMAIL:", email);
+      // basit validation
+      if (!email || !password) {
+        showMessage("error", "Please fill all fields");
+        return;
+      }
 
       try {
         const response = await fetch("/api/auth/login", {
@@ -58,25 +67,35 @@
           body: JSON.stringify({ email, password }),
         });
 
-        const result = await response.json();
+        let result;
 
-        console.log("LOGIN STATUS:", response.status);
-        console.log("LOGIN RESULT:", result);
+        try {
+          result = await response.json();
+        } catch {
+          throw new Error("Invalid server response");
+        }
 
         if (!response.ok) {
           throw new Error(result.message || "Login failed");
         }
 
+        // güvenli şekilde kaydet
         localStorage.setItem("token", result.token);
         localStorage.setItem("user", JSON.stringify(result.user));
 
-        console.log("TOKEN SAVED:", localStorage.getItem("token"));
+        showMessage("success", "Login successful. Redirecting...");
 
-        showMessage("success", "Login successful.");
+       setTimeout(() => {
+  const redirect = localStorage.getItem("redirectAfterLogin");
 
-        setTimeout(() => {
-          window.location.href = "/reservation";
-        }, 1000);
+  if (redirect) {
+    localStorage.removeItem("redirectAfterLogin");
+    window.location.href = redirect;
+  } else {
+    window.location.href = "/";
+  }
+}, 800);
+
       } catch (error) {
         console.error("LOGIN ERROR:", error);
         showMessage("error", error.message || "Login failed");
@@ -84,4 +103,5 @@
     });
   </script>
 </body>
+
 </html>

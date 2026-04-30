@@ -301,29 +301,26 @@
     <% } %>
   </main>
 
-  <script>
-    function addToCart(button) {
-      const item = {
-        id: button.dataset.id,
-        name: button.dataset.name,
-        price: Number(button.dataset.price),
-        image: button.dataset.image,
-        quantity: 1
-      };
+<script>
+  function addToCart(item) {
+  let cart = JSON.parse(localStorage.getItem("rokaCart")) || [];
 
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const existingItem = cart.find(product => product.id === item.id);
+  const existing = cart.find(i => i.name === item.name);
 
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        cart.push(item);
-      }
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({
+      ...item,
+      quantity: 1
+    });
+  }
 
-      localStorage.setItem("cart", JSON.stringify(cart));
-      alert(item.name + " added to cart!");
-    }
-  </script>
+  localStorage.setItem("rokaCart", JSON.stringify(cart));
+
+  alert("Added to cart");
+}
+</script>
   
   <%- include("../partials/chatbot") %>
   

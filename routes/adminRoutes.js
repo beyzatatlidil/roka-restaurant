@@ -15,21 +15,26 @@ const {
 } = require("../controllers/adminController");
 
 // Dashboard
-router.get("/admin", getAdminDashboard);
+router.get("/", getAdminDashboard);
 
 // Orders
-router.get("/admin/orders", getAdminOrdersPage);
-router.post("/admin/orders/:id/status", updateOrderStatus);
+router.get("/orders", getAdminOrdersPage);
+router.post("/orders/:id/status", updateOrderStatus);
 
 // Reservations
-router.get("/admin/reservations", getAdminReservationsPage);
+router.get("/reservations", getAdminReservationsPage);
 
-// Menu Management
-router.get("/admin/menu", getAdminMenuPage);
-router.get("/admin/menu/new", getNewMenuPage);
-router.post("/admin/menu/new", createMenuItem);
-router.get("/admin/menu/edit/:id", getEditMenuPage);
-router.post("/admin/menu/edit/:id", updateMenuItem);
-router.post("/admin/menu/delete/:id", deleteMenuItem);
+// Menu
+router.get("/menu", getAdminMenuPage);
+router.get("/menu/new", getNewMenuPage);
+router.post("/menu/new", createMenuItem);
+router.get("/menu/edit/:id", getEditMenuPage);
+router.post("/menu/edit/:id", updateMenuItem);
+router.post("/menu/delete/:id", deleteMenuItem);
+
+// Login
+router.get("/login", (req, res) => {
+  res.render("admin/login");
+});
 
 module.exports = router;

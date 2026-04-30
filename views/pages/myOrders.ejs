@@ -1,255 +1,344 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Orders | ROKA</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Orders | ROKA</title>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      background: #f5f7fb;
-      color: #1f2937;
-    }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f7fb;
+  margin: 0;
+  color: #1f2937;
+}
 
-    .container {
-      width: 90%;
-      max-width: 1100px;
-      margin: 40px auto;
-    }
+.container {
+  width: 90%;
+  max-width: 1050px;
+  margin: 40px auto;
+}
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
 
-    .topbar h1 {
-      font-size: 32px;
-    }
+.page-header h1 {
+  font-size: 34px;
+  margin: 0;
+}
 
-    .topbar a {
-      text-decoration: none;
-      background: #111827;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 10px;
-      font-weight: bold;
-    }
+.back-link {
+  text-decoration: none;
+  color: #111827;
+  font-weight: bold;
+  background: white;
+  padding: 10px 16px;
+  border-radius: 12px;
+  box-shadow: 0 5px 18px rgba(0,0,0,0.06);
+}
 
-    .topbar a:hover {
-      background: #f59e0b;
-      color: #111827;
-    }
+.order-card {
+  background: white;
+  border-radius: 20px;
+  padding: 22px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.07);
+}
 
-    .orders-grid {
-      display: grid;
-      gap: 20px;
-    }
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  border-bottom: 1px solid #eef0f4;
+  padding-bottom: 14px;
+}
 
-    .order-card {
-      background: white;
-      border-radius: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-      padding: 22px;
-    }
+.order-title {
+  font-size: 18px;
+  font-weight: 800;
+}
 
-    .order-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+.order-meta {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 5px;
+}
 
-    .order-header h3 {
-      font-size: 20px;
-    }
+.status {
+  padding: 7px 13px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
 
-    .status-badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: bold;
-      text-transform: capitalize;
-    }
+.pending { background: #fef3c7; color: #92400e; }
+.preparing { background: #dbeafe; color: #1d4ed8; }
+.out-for-delivery { background: #ede9fe; color: #6d28d9; }
+.delivered { background: #dcfce7; color: #166534; }
+.cancelled { background: #fee2e2; color: #991b1b; }
 
-    .pending {
-      background: #fef3c7;
-      color: #92400e;
-    }
+.order-body {
+  margin-top: 16px;
+}
 
-    .preparing {
-      background: #dbeafe;
-      color: #1d4ed8;
-    }
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
 
-    .out-for-delivery {
-      background: #ede9fe;
-      color: #6d28d9;
-    }
+.info-box {
+  background: #f9fafb;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+}
 
-    .delivered {
-      background: #dcfce7;
-      color: #166534;
-    }
+.info-box strong {
+  display: block;
+  color: #111827;
+  margin-bottom: 4px;
+}
 
-    .cancelled {
-      background: #fee2e2;
-      color: #991b1b;
-    }
+.items-box {
+  background: #f9fafb;
+  padding: 14px;
+  border-radius: 14px;
+}
 
-    .meta {
-      color: #6b7280;
-      margin-bottom: 14px;
-      line-height: 1.7;
-    }
+.item {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
 
-    .items-box {
-      background: #f9fafb;
-      border-radius: 14px;
-      padding: 14px;
-      margin-top: 14px;
-    }
+.item:last-child {
+  border-bottom: none;
+}
 
-    .items-box h4 {
-      margin-bottom: 10px;
-    }
+.item-name {
+  font-weight: 600;
+}
 
-    .items-box ul {
-      padding-left: 18px;
-    }
+.item-price {
+  font-weight: 700;
+}
 
-    .items-box li {
-      margin-bottom: 8px;
-    }
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  font-size: 18px;
+  font-weight: 900;
+}
 
-    .empty-box,
-    .error-box,
-    .loading-box {
-      background: white;
-      border-radius: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-      padding: 40px;
-      text-align: center;
-      color: #6b7280;
-    }
+.actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 
-    .error-box {
-      color: #991b1b;
-    }
-  </style>
+.btn {
+  padding: 11px 17px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+}
+
+.btn-primary {
+  background: #111827;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #f59e0b;
+  color: #111827;
+}
+
+.btn-outline {
+  background: white;
+  color: #111827;
+  border: 1px solid #d1d5db;
+}
+
+.btn-outline:hover {
+  background: #f3f4f6;
+}
+
+.empty {
+  background: white;
+  text-align: center;
+  margin-top: 80px;
+  padding: 55px 25px;
+  border-radius: 22px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.06);
+  color: #6b7280;
+}
+
+.empty h3 {
+  color: #111827;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 800px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .order-header {
+    flex-direction: column;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
 </head>
+
 <body>
 
-  <div class="container">
-    <div class="topbar">
-      <h1>My Orders</h1>
-      <a href="/menu">← Back to Menu</a>
-    </div>
+<div class="container">
 
-    <div id="content">
-      <div class="loading-box">Loading your orders...</div>
-    </div>
+  <div class="page-header">
+    <h1>My Orders</h1>
+    <a href="/" class="back-link">← Back to Menu</a>
   </div>
 
-  <script>
-    async function loadMyOrders() {
-      const content = document.getElementById("content");
-     
+  <% if (!orders || orders.length === 0) { %>
 
-      try {
-       const response = await fetch("/api/orders/myorders");
-        const data = await response.json();
+    <div class="empty">
+      <h3>No orders yet</h3>
+      <p>Start ordering from our delicious menu 🍔</p>
+      <br>
+      <a href="/" class="btn btn-primary">Browse Menu</a>
+    </div>
 
-        if (!response.ok) {
-          content.innerHTML = `
-            <div class="error-box">
-              <h3>Could not load orders</h3>
-              <p>${data.message || "Access denied"}</p>
+  <% } else { %>
+
+    <% orders.forEach(order => { %>
+
+      <%
+        const statusClass = order.status
+          ? order.status.replaceAll(" ", "-")
+          : "pending";
+
+        const orderDate = order.createdAt
+          ? new Date(order.createdAt).toLocaleString("tr-TR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit"
+            })
+          : "No date";
+
+        const items = order.orderItems || [];
+      %>
+
+      <div class="order-card">
+
+        <div class="order-header">
+          <div>
+            <div class="order-title">
+              Order #<%= String(order._id).slice(-6).toUpperCase() %>
             </div>
-          `;
-          return;
-        }
-
-        const orders = data.orders || [];
-
-        if (orders.length === 0) {
-          content.innerHTML = `
-            <div class="empty-box">
-              <h3>No orders yet</h3>
-              <p>Your placed orders will appear here.</p>
+            <div class="order-meta">
+              <%= orderDate %>
             </div>
-          `;
-          return;
-        }
-
-        content.innerHTML = `
-          <div class="orders-grid">
-            ${orders.map(order => `
-              <div class="order-card">
-                <div class="order-header">
-                  <h3>Order #${String(order._id).slice(-6).toUpperCase()}</h3>
-                  <span class="status-badge ${getStatusClass(order.status)}">
-                    ${order.status || "pending"}
-                  </span>
-                </div>
-
-                <div class="meta">
-                  <p><strong>Total:</strong> ${order.totalPrice || 0} TL</p>
-                  <p><strong>Address:</strong> ${order.deliveryAddress || "No address"}</p>
-                  <p><strong>Phone:</strong> ${order.phone || "No phone"}</p>
-                  <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
-                </div>
-
-                <div class="items-box">
-                  <h4>Items</h4>
-                  <ul>
-                    ${(order.orderItems || []).map(item => `
-                      <li>
-                        <strong>${item.name}</strong> —
-                        Qty: ${item.quantity} —
-                        Price: ${item.price} TL
-                      </li>
-                    `).join("")}
-                  </ul>
-                </div>
-              </div>
-            `).join("")}
           </div>
-        `;
-      } catch (error) {
-        content.innerHTML = `
-          <div class="error-box">
-            <h3>Something went wrong</h3>
-            <p>${error.message}</p>
+
+          <span class="status <%= statusClass %>">
+            <%= order.status || "pending" %>
+          </span>
+        </div>
+
+        <div class="order-body">
+
+          <div class="info-grid">
+            <div class="info-box">
+              <strong>Phone</strong>
+              <%= order.phone || "No phone" %>
+            </div>
+
+            <div class="info-box">
+              <strong>Address</strong>
+              <%= order.deliveryAddress || "No address" %>
+            </div>
+
+            <div class="info-box">
+              <strong>Payment</strong>
+              Cash / Card on delivery
+            </div>
           </div>
-        `;
-      }
-    }
 
-    function getStatusClass(status) {
-      if (status === "pending") return "pending";
-      if (status === "preparing") return "preparing";
-      if (status === "out for delivery") return "out-for-delivery";
-      if (status === "delivered") return "delivered";
-      if (status === "cancelled") return "cancelled";
-      return "pending";
-    }
+          <div class="items-box">
+            <% if (items.length === 0) { %>
+              <p>No items found for this order.</p>
+            <% } else { %>
+              <% items.forEach(item => { %>
+                <%
+                  const quantity = item.qty || item.quantity || 1;
+                  const price = item.price || 0;
+                  const itemName = item.name || item.title || "Menu Item";
+                %>
 
-    loadMyOrders();
-  </script>
+                <div class="item">
+                  <div>
+                    <span class="item-name"><%= itemName %></span>
+                    <span> × <%= quantity %></span>
+                  </div>
+                  <div class="item-price">
+                    <%= price * quantity %> TL
+                  </div>
+                </div>
+              <% }) %>
+            <% } %>
+          </div>
+
+          <div class="total-row">
+            <span>Total</span>
+            <span><%= order.totalPrice || 0 %> TL</span>
+          </div>
+
+          <div class="actions">
+            <form action="/api/orders/reorder/<%= order._id %>" method="POST">
+              <button type="submit" class="btn btn-primary">Reorder</button>
+            </form>
+
+            <a href="/" class="btn btn-outline">Order More</a>
+          </div>
+
+        </div>
+      </div>
+
+    <% }) %>
+
+  <% } %>
+
+</div>
 
 </body>
 </html>

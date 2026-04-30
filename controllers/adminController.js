@@ -69,14 +69,18 @@ const getNewMenuPage = async (req, res) => {
 // Create menu item
 const createMenuItem = async (req, res) => {
   try {
-    const { name, description, price, category, image } = req.body;
+      const { name, description, price, category, image } = req.body;
+
+      const imageUrl = image && image.trim() !== ""
+        ? image
+        : "https://via.placeholder.com/300x200?text=Food";
 
     await Menu.create({
       name,
       description,
       price,
       category,
-      image,
+      image: imageUrl,
     });
 
     res.redirect("/admin/menu");

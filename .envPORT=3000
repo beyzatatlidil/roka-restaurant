@@ -1,0 +1,4 @@
+PORT=3000
+MONGO_URI=mongodb+srv://beyzattlidil_db_user:beyzaemir777@cluster0.rmsufhs.mongodb.net/roka-restaurant?retryWrites=true&w=majority
+JWT_SECRET=myverysecretkey123
+STACKAI_API_KEY=4cb96d1f-0f54-4ab2-9e0b-28d38a51c4a1

@@ -1,305 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Roka Restaurant | Checkout</title>
+  <title>Checkout</title>
 
   <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
     body{
-      background:#f7f7f7;
-    }
-
-    .navbar{
-      background:#111;
-      color:white;
-      padding:18px 40px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-    }
-
-    .navbar a{
-      color:white;
-      text-decoration:none;
-      margin-left:20px;
-      font-weight:bold;
+      font-family:Arial;
+      background:#f5f5f5;
     }
 
     .container{
-      width:90%;
-      max-width:700px;
-      margin:50px auto;
+      max-width:1000px;
+      margin:40px auto;
+      display:grid;
+      grid-template-columns:2fr 1fr;
+      gap:20px;
+    }
+
+    .box{
       background:white;
-      padding:30px;
-      border-radius:10px;
+      padding:25px;
+      border-radius:12px;
       box-shadow:0 5px 20px rgba(0,0,0,0.08);
-    }
-
-    h1{
-      margin-bottom:25px;
-    }
-
-    .form-group{
-      margin-bottom:18px;
-    }
-
-    label{
-      display:block;
-      margin-bottom:8px;
-      font-weight:bold;
     }
 
     input, textarea, select{
       width:100%;
-      padding:12px;
-      border:1px solid #ccc;
-      border-radius:8px;
-      font-size:15px;
-    }
-
-    .summary{
-      background:#fafafa;
-      border:1px solid #eee;
-      border-radius:8px;
-      padding:16px;
-      margin:20px 0;
-    }
-
-    .summary h3{
+      padding:10px;
       margin-bottom:12px;
-    }
-
-    .summary-item{
-      display:flex;
-      justify-content:space-between;
-      margin-bottom:8px;
-    }
-
-    .total{
-      margin-top:12px;
-      font-size:20px;
-      font-weight:bold;
-      text-align:right;
-    }
-
-    .btn{
-      width:100%;
-      border:none;
-      background:#f59e0b;
-      color:black;
-      padding:14px;
       border-radius:8px;
-      cursor:pointer;
+      border:1px solid #ddd;
+    }
+
+    button{
+      width:100%;
+      padding:12px;
+      background:#f59e0b;
+      border:none;
+      border-radius:8px;
       font-weight:bold;
-      font-size:16px;
+      cursor:pointer;
     }
   </style>
 </head>
+
 <body>
 
-  <div class="navbar">
-    <div><strong>ROKA Restaurant</strong></div>
-    <div>
-      <a href="/">Home</a>
-      <a href="/menu">Menu</a>
-      <a href="/cart">Cart</a>
-    </div>
+<div class="container">
+
+  <!-- LEFT -->
+  <div class="box">
+    <h2>Customer Info</h2>
+
+    <input id="name" placeholder="Full Name" />
+    <input id="phone" placeholder="Phone" />
+    <textarea id="address" placeholder="Address"></textarea>
+
+    <h3>Payment Method</h3>
+    <select id="payment">
+      <option>Cash on Delivery</option>
+      <option>Card on Delivery</option>
+      <option>Demo Online Payment</option>
+    </select>
   </div>
 
-  <div class="container">
-    <h1>Checkout</h1>
+  <!-- RIGHT -->
+  <div class="box">
+    <h2>Order Summary</h2>
 
-    <form id="checkout-form">
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="name" required />
-      </div>
+    <div id="summary"></div>
 
-      <div class="form-group">
-        <label>Phone</label>
-        <input type="text" id="phone" required />
-      </div>
+    <h3 id="total"></h3>
 
-      <div class="form-group">
-        <label>Delivery Address</label>
-        <textarea id="address" rows="4" required></textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Payment Method</label>
-        <select id="paymentMethod" required>
-          <option value="Cash">Cash</option>
-          <option value="Card">Card</option>
-        </select>
-      </div>
-
-      <div class="summary">
-        <h3>Order Summary</h3>
-        <div id="summary-items"></div>
-        <div class="total" id="summary-total"></div>
-      </div>
-
-      <button type="submit" class="btn">Place Order</button>
-    </form>
+    <button onclick="placeOrder()">Place Order</button>
   </div>
 
-  <script>
-    function renderSummary() {
-      const summaryItems = document.getElementById("summary-items");
-      const summaryTotal = document.getElementById("summary-total");
+</div>
 
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+<script>
+  function loadSummary(){
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-      if (cart.length === 0) {
-        summaryItems.innerHTML = "<p>Your cart is empty.</p>";
-        summaryTotal.innerHTML = "Total: 0 TL";
-        return;
-      }
-
-      let total = 0;
-
-      summaryItems.innerHTML = cart.map(item => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
-
-        return `
-          <div class="summary-item">
-            <span>${item.name} x ${item.quantity}</span>
-            <span>${itemTotal} TL</span>
-          </div>
-        `;
-      }).join("");
-
-      summaryTotal.innerHTML = `Total: ${total} TL`;
+    if(cart.length === 0){
+      document.getElementById("summary").innerHTML = "<p>Your cart is empty</p>";
+      document.getElementById("total").innerText = "";
+      return;
     }
 
-    document.getElementById("checkout-form").addEventListener("submit", async function(e) {
-      e.preventDefault();
+    let subtotal = 0;
 
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    document.getElementById("summary").innerHTML = cart.map(item=>{
+      const itemTotal = item.price * item.quantity;
+      subtotal += itemTotal;
 
-      if (cart.length === 0) {
-        alert("Your cart is empty!");
-        return;
-      }
+      return `
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+          <span>${item.name} x ${item.quantity}</span>
+          <span>${itemTotal} TL</span>
+        </div>
+      `;
+    }).join("");
 
-      const token = localStorage.getItem("token");
+    const deliveryFee = 40;
+    const serviceFee = 10;
+    const total = subtotal + deliveryFee + serviceFee;
 
-     document.getElementById("checkout-form").addEventListener("submit", async function(e) {
-  e.preventDefault();
+    document.getElementById("summary").innerHTML += `
+      <hr style="margin:10px 0">
+      <p>Subtotal: ${subtotal} TL</p>
+      <p>Delivery: ${deliveryFee} TL</p>
+      <p>Service Fee: ${serviceFee} TL</p>
+    `;
 
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  if (cart.length === 0) {
-    alert("Your cart is empty!");
-    return;
+    document.getElementById("total").innerText = "Total: " + total + " TL";
   }
+  
 
-  const name = document.getElementById("name").value;
-  const phone = document.getElementById("phone").value;
-  const address = document.getElementById("address").value;
-  const paymentMethod = document.getElementById("paymentMethod").value;
+   function placeOrder(){
+    const name = document.getElementById("name").value;
+    const phone = document.getElementById("phone").value;
+    const address = document.getElementById("address").value;
+    const payment = document.getElementById("payment").value;
 
-  const totalPrice = cart.reduce((sum, item) => {
-    return sum + item.price * item.quantity;
-  }, 0);
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  const orderData = {
-    orderItems: cart.map(item => ({
-      menuItem: item.id,
-      name: item.name,
-      quantity: item.quantity,
-      price: item.price
-    })),
-    totalPrice,
-    deliveryAddress: address,
-    paymentMethod,
-    customerName: name,
-    phone
-  };
-
-  try {
-    const response = await fetch("/api/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(orderData)
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      alert("Order placed successfully!");
-      localStorage.removeItem("cart");
-      window.location.href = "/menu";
-    } else {
-      alert(data.message || "Order could not be created.");
+    if(cart.length === 0){
+      alert("Cart is empty!");
+      return;
     }
-  } catch (error) {
-    console.error(error);
-    alert("Something went wrong while creating the order.");
+
+    if(!name || !phone || !address){
+      alert("Please fill all fields");
+      return;
+    }
+
+    const order = {
+      name,
+      phone,
+      address,
+      payment,
+      items: cart,
+      date: new Date(),
+      status: "pending"
+    };
+
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+    orders.push(order);
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+    alert("Order placed successfully!");
+
+    localStorage.removeItem("cart");
+    window.location.href = "/";
   }
-});
 
-      const name = document.getElementById("name").value;
-      const phone = document.getElementById("phone").value;
-      const address = document.getElementById("address").value;
-      const paymentMethod = document.getElementById("paymentMethod").value;
-
-      const totalPrice = cart.reduce((sum, item) => {
-        return sum + item.price * item.quantity;
-      }, 0);
-
-      const orderData = {
-        orderItems: cart.map(item => ({
-          menuItem: item.id,
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price
-        })),
-        totalPrice,
-        deliveryAddress: address,
-        paymentMethod,
-        customerName: name,
-        phone
-      };
-
-      try {
-        const response = await fetch("/api/orders", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(orderData)
-        });
-
-        const data = await response.json();
-
-       if (response.ok) {
-  alert("Order placed successfully!");
-  localStorage.removeItem("cart");
-  window.location.href = "/menu";
-} else {
-  alert((data.message || "Order could not be created.") + " | " + (data.error || ""));
-}
-      } catch (error) {
-        console.error(error);
-        alert("Something went wrong while creating the order.");
-      }
-    });
-
-    renderSummary();
-  </script>
+  loadSummary();
+</script>
 
 </body>
 </html>

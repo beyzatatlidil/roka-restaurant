@@ -48,13 +48,13 @@ app.get("/my-reservations", async (req, res) => {
     const phone = req.query.phone;
 
     if (!phone) {
-      return res.render("pages/myReservations", { reservations: null });
+      return res.render("pages/myReservations", { reservations: [] });
     }
 
     const reservations = await Reservation.find({ phone }).sort({ createdAt: -1 });
-    return res.render("pages/myReservations", { reservations });
+    return res.render("pages/myReservations", { reservations: reservations || [] });
   } catch (error) {
-    console.error(error);
+    console.log("MY RESERVATIONS PAGE ERROR:", error);
     return res.render("pages/myReservations", { reservations: [] });
   }
 });

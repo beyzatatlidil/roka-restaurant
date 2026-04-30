@@ -86,9 +86,9 @@ const getMyOrdersPage = async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
 
-    res.render("pages/myOrders", { orders });
+    res.render("pages/myOrders", { orders: orders || [] });
   } catch (error) {
-    console.error(error);
+    console.log("MY ORDERS PAGE ERROR:", error);
     res.render("pages/myOrders", { orders: [] });
   }
 };

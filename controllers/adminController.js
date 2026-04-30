@@ -18,8 +18,13 @@ const getAdminDashboard = async (req, res) => {
       menuCount,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Admin dashboard yüklenemedi");
+    console.log("ADMIN DASHBOARD ERROR:", error);
+    res.render("admin/dashboard", {
+      userCount: 0,
+      orderCount: 0,
+      reservationCount: 0,
+      menuCount: 0,
+    });
   }
 };
 
@@ -27,10 +32,10 @@ const getAdminDashboard = async (req, res) => {
 const getAdminOrdersPage = async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
-    res.render("admin/orders", { orders });
+    res.render("admin/orders", { orders: orders || [] });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Orders sayfası yüklenemedi");
+    console.log("ADMIN ORDERS PAGE ERROR:", error);
+    res.render("admin/orders", { orders: [] });
   }
 };
 
@@ -38,10 +43,10 @@ const getAdminOrdersPage = async (req, res) => {
 const getAdminReservationsPage = async (req, res) => {
   try {
     const reservations = await Reservation.find().sort({ createdAt: -1 });
-    res.render("admin/reservations", { reservations });
+    res.render("admin/reservations", { reservations: reservations || [] });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Reservations sayfası yüklenemedi");
+    console.log("ADMIN RESERVATIONS PAGE ERROR:", error);
+    res.render("admin/reservations", { reservations: [] });
   }
 };
 
@@ -49,10 +54,10 @@ const getAdminReservationsPage = async (req, res) => {
 const getAdminMenuPage = async (req, res) => {
   try {
     const menuItems = await Menu.find().sort({ createdAt: -1 });
-    res.render("admin/menu", { menuItems });
+    res.render("admin/menu", { menuItems: menuItems || [] });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Menu sayfası yüklenemedi");
+    console.log("ADMIN MENU PAGE ERROR:", error);
+    res.render("admin/menu", { menuItems: [] });
   }
 };
 
@@ -61,8 +66,8 @@ const getNewMenuPage = async (req, res) => {
   try {
     res.render("admin/newMenu");
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Yeni ürün sayfası yüklenemedi");
+    console.log("ADMIN NEW MENU PAGE ERROR:", error);
+    res.render("admin/newMenu");
   }
 };
 
@@ -96,13 +101,13 @@ const getEditMenuPage = async (req, res) => {
     const menuItem = await Menu.findById(req.params.id);
 
     if (!menuItem) {
-      return res.status(404).send("Ürün bulunamadı");
+      return res.render("admin/editMenu", { menuItem: {} });
     }
 
-    res.render("admin/editMenu", { menuItem });
+    res.render("admin/editMenu", { menuItem: menuItem || {} });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Düzenleme sayfası yüklenemedi");
+    console.log("ADMIN EDIT MENU PAGE ERROR:", error);
+    res.render("admin/editMenu", { menuItem: {} });
   }
 };
 

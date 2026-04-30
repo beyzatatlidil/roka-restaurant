@@ -19,6 +19,9 @@ router.get("/menu", async (req, res) => {
     res.render("pages/menu", { menuItems: [] });
   }
 });
+router.get("/checkout", (req, res) => {
+  res.render("pages/checkout");
+});
 
 // CART PAGE
 router.get("/cart", (req, res) => {
@@ -33,5 +36,6 @@ router.get("/reservation", (req, res) => {
 router.get("/login", (req, res) => {
   res.render("pages/login");
 });
+
 
 module.exports = router;

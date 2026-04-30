@@ -78,6 +78,15 @@
 </div>
 
 <script>
+  // LOGIN GUARD (PRO LEVEL)
+(function () {
+  const token = localStorage.getItem("token");
+
+  if (!token || token === "undefined" || token === "null") {
+    alert("Sipariş vermek için giriş yapmalısınız");
+    window.location.href = "/login?redirect=/checkout";
+  }
+})();
   const CART_KEY = "rokaCart";
   const API_URL = "/api/orders";
 

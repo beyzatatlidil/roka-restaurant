@@ -302,26 +302,42 @@
   </main>
 
 <script>
-  function addToCart(item) {
-  const cart = JSON.parse(localStorage.getItem("rokaCart")) || [];
-  const product = {
-    _id: item.dataset.id,
-    name: item.dataset.name,
-    price: Number(item.dataset.price) || 0,
-    image: item.dataset.image || "",
-    qty: 1,
-  };
+async function addToCart(item) {
+  try {
+    const user = JSON.parse(localStorage.getItem("user"));
 
-  const existing = cart.find((i) => i._id === product._id);
+    if (!user) {
+      alert("Sipariş vermek için giriş yapmalısınız");
+      window.location.href = "/login";
+      return;
+    }
 
-  if (existing) {
-    existing.qty = Number(existing.qty || 0) + 1;
-  } else {
-    cart.push(product);
+    const menuItemId = item.dataset.id;
+
+    const response = await fetch("/api/cart/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: user._id,
+        menuItemId: menuItemId,
+        quantity: 1,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("Added to cart ✅");
+    } else {
+      alert("Error adding to cart");
+    }
+
+  } catch (error) {
+    console.log(error);
+    alert("Cart error ❌");
   }
-
-  localStorage.setItem("rokaCart", JSON.stringify(cart));
-  alert("Added to cart");
 }
 </script>
   

@@ -1,41 +1,50 @@
 const express = require("express");
 const router = express.Router();
-const axios = require("axios");
+
+// 🔥 MODELİ EKLE (EN ÖNEMLİ KISIM)
+const Menu = require("../models/Menu");
 
 // HOME
 router.get("/", (req, res) => {
   res.render("pages/home");
 });
 
-// MENU
+// MENU (🚀 AXIOS KALDIRILDI → DIREKT DB)
 router.get("/menu", async (req, res) => {
   try {
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
-    const response = await axios.get(`${baseUrl}/api/menu`);
-    const menuItems = response.data.menuItems || response.data;
+    const menuItems = await Menu.find();
 
-    res.render("pages/menu", { menuItems });
+    res.render("pages/menu", {
+      menuItems: menuItems || []
+    });
+
   } catch (error) {
-    res.render("pages/menu", { menuItems: [] });
+    console.log("MENU ERROR:", error);
+
+    res.render("pages/menu", {
+      menuItems: []
+    });
   }
 });
+
+// CHECKOUT
 router.get("/checkout", (req, res) => {
   res.render("pages/checkout");
 });
 
-// CART PAGE
+// CART
 router.get("/cart", (req, res) => {
   res.render("pages/cart");
 });
 
-// RESERVATION PAGE
+// RESERVATION
 router.get("/reservation", (req, res) => {
   res.render("pages/reservation");
 });
 
+// LOGIN
 router.get("/login", (req, res) => {
   res.render("pages/login");
 });
-
 
 module.exports = router;

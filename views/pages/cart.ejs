@@ -283,7 +283,6 @@
 
   <script>
     const CART_KEY = "rokaCart";
-    const API_URL = "/api/orders";
 
     function getCart() {
       try {
@@ -424,15 +423,9 @@
       totalContainer.innerText = grandTotal + " TL";
     }
 
-    async function createOrder() {
+    function goToCheckout() {
+      const cart = getCart();
       const token = getToken();
-      const cart = getCart().map((item) => ({
-        _id: item._id,
-        name: item.name || "Menu Item",
-        price: Number(item.price) || 0,
-        image: item.image || "",
-        qty: Number(item.qty || item.quantity) || 1,
-      }));
 
       if (cart.length === 0) {
         alert("Your cart is empty!");
@@ -440,61 +433,15 @@
       }
 
       if (!token) {
-        window.location.href = "/login?redirect=/cart";
+        alert("Sipariş vermek için giriş yapmalısınız");
+        window.location.href = "/login?redirect=/checkout";
         return;
       }
 
-      const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-      const deliveryFee = 40;
-      const serviceFee = 10;
-      const totalPrice = subtotal + deliveryFee + serviceFee;
-
-
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + token
-          },
-          body: JSON.stringify({
-            items: cart,
-            totalPrice,
-          })
-        });
-
-        if (res.status === 401) {
-          openModal();
-          return;
-        }
-
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
-          alert(errorData.message || "Order failed");
-          return;
-        }
-
-        localStorage.removeItem(CART_KEY);
-        window.location.href = "/my-orders";
-
-      } catch (error) {
-        console.error(error);
-        alert("Network error. Please try again.");
-      }
-    }
-
-    function goToCheckout() {
-      createOrder();
+      window.location.href = "/checkout";
     }
 
     renderCart();
-
-    const params = new URLSearchParams(window.location.search);
-
-    if (params.get("checkout") === "1") {
-      window.history.replaceState({}, document.title, "/cart");
-      createOrder();
-    }
   </script>
 
 </body>

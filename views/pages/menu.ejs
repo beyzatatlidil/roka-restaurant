@@ -283,16 +283,15 @@
               <div class="menu-footer">
                 <div class="price"><%= item.price %> TL</div>
 
-                <button
-                  class="add-btn"
-                  data-id="<%= item._id %>"
-                  data-name="<%= item.name %>"
-                  data-price="<%= item.price %>"
-                  data-image="<%= item.image || '' %>"
-                  onclick="addToCart(this)"
-                >
-                  Add to Cart
-                </button>
+               <button
+  class="add-btn"
+  data-id="<%= item._id %>"
+  data-name="<%= item.name %>"
+  data-price="<%= item.price %>"
+  data-image="<%= item.image || '' %>"
+>
+  Add to Cart
+</button>
               </div>
             </div>
           </div>
@@ -301,44 +300,60 @@
     <% } %>
   </main>
 
+
+
 <script>
-async function addToCart(item) {
-  try {
-    const user = JSON.parse(localStorage.getItem("user"));
+document.addEventListener("DOMContentLoaded", () => {
+  const CART_KEY = "rokaCart";
 
-    if (!user) {
-      alert("Sipariş vermek için giriş yapmalısınız");
-      window.location.href = "/login";
-      return;
+  function getCart() {
+    try {
+      return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    } catch {
+      return [];
     }
+  }
 
-    const menuItemId = item.dataset.id;
+  function saveCart(cart) {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  }
 
-    const response = await fetch("/api/cart/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: user._id,
-        menuItemId: menuItemId,
-        quantity: 1,
-      }),
+  document.querySelectorAll(".add-btn").forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+      let cart = getCart();
+
+      const product = {
+        _id: btn.dataset.id,
+        name: btn.dataset.name,
+        price: Number(btn.dataset.price) || 0,
+        image: btn.dataset.image || "",
+        qty: 1
+      };
+
+      const existing = cart.find(i => i._id === product._id);
+
+      if (existing) {
+        existing.qty = Number(existing.qty || 0) + 1;
+      } else {
+        cart.push(product);
+      }
+
+      saveCart(cart);
+
+      console.log("CART:", cart);
+
+      // küçük UX (sayfanı bozmaz)
+      btn.innerText = "Added ✓";
+      setTimeout(() => {
+        btn.innerText = "Add to Cart";
+      }, 800);
+
     });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      alert("Added to cart ✅");
-    } else {
-      alert("Error adding to cart");
-    }
-
-  } catch (error) {
-    console.log(error);
-    alert("Cart error ❌");
-  }
-}
+  });
+});
 </script>
   
   <%- include("../partials/chatbot") %>

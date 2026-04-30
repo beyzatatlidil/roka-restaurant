@@ -28,78 +28,97 @@
     </form>
   </main>
 
-  <script>
-    const loginForm = document.getElementById("loginForm");
-    const loginMessage = document.getElementById("loginMessage");
-    const redirectParam = new URLSearchParams(window.location.search).get("redirect");
+  <script>ee
+const loginForm = document.getElementById("loginForm");
+const loginMessage = document.getElementById("loginMessage");
 
-    function showMessage(type, text) {
-      loginMessage.innerHTML = `
-        <div style="
-          padding: 12px;
-          margin-bottom: 16px;
-          border-radius: 8px;
-          color: white;
-          background: ${type === "success" ? "#16a34a" : "#dc2626"};
-        ">
-          ${text}
-        </div>
-      `;
+const redirectParam = new URLSearchParams(window.location.search).get("redirect");
+
+function showMessage(type, text) {
+  loginMessage.innerHTML = `
+    <div style="
+      padding: 12px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      color: white;
+      background: ${type === "success" ? "#16a34a" : "#dc2626"};
+    ">
+      ${text}
+    </div>
+  `;
+}
+
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) {
+    showMessage("error", "Please fill all fields");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const result = await response.json();
+    console.log("LOGIN RESULT:", result);
+
+    if (!response.ok || !result.token) {
+      localStorage.removeItem("token");
+      throw new Error(result.message || "Login failed");
     }
 
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    if (
+      result.token === "undefined" ||
+      result.token === "null" ||
+      result.token.trim() === ""
+    ) {
+      localStorage.removeItem("token");
+      throw new Error("Invalid token");
+    }
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+    // SAVE
+    localStorage.setItem("token", result.token);
+    localStorage.setItem("user", JSON.stringify(result.user));
 
-      // basit validation
-      if (!email || !password) {
-        showMessage("error", "Please fill all fields");
+    showMessage("success", "Login successful. Redirecting...");
+
+    setTimeout(() => {
+
+      // 1️⃣ URL redirect
+      if (redirectParam && redirectParam !== "null") {
+        window.location.href = redirectParam;
         return;
       }
 
-      try {
-        const response = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        });
+      // 2️⃣ Cart redirect
+      const savedRedirect = localStorage.getItem("rokaRedirectAfterLogin");
 
-        let result;
-
-        try {
-          result = await response.json();
-        } catch {
-          throw new Error("Invalid server response");
-        }
-
-        if (!response.ok) {
-          throw new Error(result.message || "Login failed");
-        }
-
-        // güvenli şekilde kaydet
-        localStorage.setItem("token", result.token);
-        localStorage.setItem("user", JSON.stringify(result.user));
-
-        showMessage("success", "Login successful. Redirecting...");
-
-        setTimeout(() => {
-          if (redirectParam) {
-            window.location.href = redirectParam;
-          } else {
-            window.location.href = "/";
-          }
-        }, 800);
-
-      } catch (error) {
-        console.error("LOGIN ERROR:", error);
-        showMessage("error", error.message || "Login failed");
+      if (savedRedirect) {
+        localStorage.removeItem("rokaRedirectAfterLogin");
+        window.location.href = savedRedirect;
+        return;
       }
-    });
-  </script>
+
+      // 3️⃣ default
+      window.location.href = "/";
+
+    }, 800);
+
+  } catch (error) {
+    console.error("LOGIN ERROR:", error);
+    showMessage("error", error.message || "Login failed");
+  }
+});
+</script>
 </body>
 
 </html>

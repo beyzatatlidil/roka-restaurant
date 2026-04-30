@@ -80,41 +80,51 @@
       <div class="price"><%= item.price %> TL</div>
       <div class="desc"><%= item.description %></div>
 
-      <button class="btn"
-        onclick="addToCart(
-          '<%= item._id %>',
-          '<%= item.name %>',
-          '<%= item.price %>',
-          '<%= item.image %>'
-        )">
-        Add to Cart
-      </button>
+      <button
+  onclick="addToCart(this)"
+  data-id="<%= item._id %>"
+  data-name="<%= item.name %>"
+  data-price="<%= item.price %>"
+  data-image="<%= item.image %>"
+>
+  Add to Cart
+</button>
     </div>
 
   <% }) %>
 </div>
 
 <script>
-function addToCart(id, name, price, image) {
-  let cart = JSON.parse(localStorage.getItem("rokaCart")) || [];
+function addToCart(btn) {
+  const CART_KEY = "rokaCart";
 
-  const existing = cart.find(i => i.id === id);
+  let cart = [];
 
-  if (existing) {
-    existing.quantity += 1;
-  } else {
-    cart.push({
-      id,
-      name,
-      price: Number(price),
-      image,
-      quantity: 1
-    });
+  try {
+    cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+  } catch {
+    cart = [];
   }
 
-  localStorage.setItem("rokaCart", JSON.stringify(cart));
+  const product = {
+    _id: btn.dataset.id,
+    name: btn.dataset.name,
+    price: Number(btn.dataset.price) || 0,
+    image: btn.dataset.image || "",
+    qty: 1
+  };
 
-  alert("Added to cart");
+  const existing = cart.find(i => i._id === product._id);
+
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push(product);
+  }
+
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+
+  alert("Added to cart ✅");
 }
 </script>
 

@@ -11,6 +11,7 @@ const reservationRoutes = require("./routes/reservationRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const menuPageRoutes = require("./routes/menuPageRoutes");
+const cartRoutes = require("./routes/cartRoutes");
 
 const Reservation = require("./models/reservationModel");
 const { getMyOrdersPage } = require("./controllers/orderController");
@@ -39,6 +40,8 @@ app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/cart", cartRoutes);
+
 
 // Pages
 app.get("/my-orders", getMyOrdersPage);

@@ -3,26 +3,46 @@ const Order = require("../models/Order");
 // 🔥 CREATE ORDER
 const createOrder = async (req, res) => {
   try {
-    const { orderItems, totalPrice, deliveryAddress, phone } = req.body;
+    const { items, orderItems, totalPrice, deliveryAddress, phone } = req.body;
+    const rawItems = Array.isArray(items) ? items : orderItems;
 
-    if (!orderItems || orderItems.length === 0) {
+    if (!rawItems || rawItems.length === 0) {
       return res.status(400).json({ message: "Sipariş ürünleri boş olamaz" });
     }
 
-    if (!deliveryAddress) {
-      return res.status(400).json({ message: "Teslimat adresi zorunludur" });
+    const normalizedItems = rawItems.map((item) => {
+      const qty = Number(item.qty || item.quantity) || 1;
+      const price = Number(item.price) || 0;
+
+      return {
+        menuItem: item.menuItem || item._id,
+        name: item.name || "Menu Item",
+        quantity: qty,
+        price,
+      };
+    });
+
+    const invalidItem = normalizedItems.find(
+      (item) => !item.menuItem || !item.name || item.quantity <= 0 || item.price < 0
+    );
+
+    if (invalidItem) {
+      return res.status(400).json({ message: "Geçersiz sipariş ürünleri" });
     }
 
-    if (!phone) {
-      return res.status(400).json({ message: "Telefon numarası zorunludur" });
-    }
+    const computedTotal = normalizedItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    const finalTotalPrice =
+      typeof totalPrice === "number" && totalPrice >= 0 ? totalPrice : computedTotal;
 
     const newOrder = await Order.create({
-      user: req.user ? req.user._id : null,
-      orderItems,
-      totalPrice,
-      deliveryAddress,
-      phone,
+      user: req.user._id,
+      orderItems: normalizedItems,
+      totalPrice: finalTotalPrice,
+      deliveryAddress: deliveryAddress || "Not provided",
+      phone: phone || "",
       status: "pending",
     });
 

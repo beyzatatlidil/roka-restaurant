@@ -317,22 +317,15 @@
     }
 
     function goLogin() {
-  localStorage.setItem("redirectAfterLogin", "/cart?checkout=1");
-  window.location.href = "/login";
-}
-const redirect = localStorage.getItem("redirectAfterLogin");
-
-if (redirect) {
-  localStorage.removeItem("redirectAfterLogin");
-  window.location.href = redirect;
-}
+      window.location.href = "/login?redirect=/cart";
+    }
 
     function increaseQty(index) {
       const cart = getCart();
 
       if (!cart[index]) return;
 
-      cart[index].quantity += 1;
+      cart[index].qty = Number(cart[index].qty || cart[index].quantity || 1) + 1;
       saveCart(cart);
       renderCart();
     }
@@ -342,8 +335,10 @@ if (redirect) {
 
       if (!cart[index]) return;
 
-      if (cart[index].quantity > 1) {
-        cart[index].quantity -= 1;
+      const currentQty = Number(cart[index].qty || cart[index].quantity || 1);
+
+      if (currentQty > 1) {
+        cart[index].qty = currentQty - 1;
       } else {
         cart.splice(index, 1);
       }
@@ -388,8 +383,8 @@ if (redirect) {
         const name = item.name || "Menu Item";
         const image = item.image || "/images/default-food.jpg";
         const price = Number(item.price) || 0;
-        const quantity = Number(item.quantity) || 1;
-        const itemTotal = price * quantity;
+        const qty = Number(item.qty || item.quantity) || 1;
+        const itemTotal = price * qty;
 
         subtotal += itemTotal;
 
@@ -405,7 +400,7 @@ if (redirect) {
 
               <div class="quantity-box">
                 <button onclick="decreaseQty(${index})">-</button>
-                <span>${quantity}</span>
+                <span>${qty}</span>
                 <button onclick="increaseQty(${index})">+</button>
               </div>
             </div>
@@ -431,7 +426,13 @@ if (redirect) {
 
     async function createOrder() {
       const token = getToken();
-      const cart = getCart();
+      const cart = getCart().map((item) => ({
+        _id: item._id,
+        name: item.name || "Menu Item",
+        price: Number(item.price) || 0,
+        image: item.image || "",
+        qty: Number(item.qty || item.quantity) || 1,
+      }));
 
       if (cart.length === 0) {
         alert("Your cart is empty!");
@@ -439,20 +440,15 @@ if (redirect) {
       }
 
       if (!token) {
-        openModal();
+        window.location.href = "/login?redirect=/cart";
         return;
       }
 
-      const orderItems = cart.map(item => ({
-        name: item.name,
-        qty: Number(item.quantity) || 1,
-        price: Number(item.price) || 0
-      }));
+      const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+      const deliveryFee = 40;
+      const serviceFee = 10;
+      const totalPrice = subtotal + deliveryFee + serviceFee;
 
-      const totalPrice = orderItems.reduce(
-        (sum, item) => sum + item.price * item.qty,
-        0
-      );
 
       try {
         const res = await fetch(API_URL, {
@@ -462,10 +458,8 @@ if (redirect) {
             "Authorization": "Bearer " + token
           },
           body: JSON.stringify({
-            orderItems,
+            items: cart,
             totalPrice,
-            deliveryAddress: "Test Address",
-            phone: "0555"
           })
         });
 

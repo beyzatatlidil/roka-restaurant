@@ -31,6 +31,7 @@
   <script>
     const loginForm = document.getElementById("loginForm");
     const loginMessage = document.getElementById("loginMessage");
+    const redirectParam = new URLSearchParams(window.location.search).get("redirect");
 
     function showMessage(type, text) {
       loginMessage.innerHTML = `
@@ -85,16 +86,13 @@
 
         showMessage("success", "Login successful. Redirecting...");
 
-       setTimeout(() => {
-  const redirect = localStorage.getItem("redirectAfterLogin");
-
-  if (redirect) {
-    localStorage.removeItem("redirectAfterLogin");
-    window.location.href = redirect;
-  } else {
-    window.location.href = "/";
-  }
-}, 800);
+        setTimeout(() => {
+          if (redirectParam) {
+            window.location.href = redirectParam;
+          } else {
+            window.location.href = "/";
+          }
+        }, 800);
 
       } catch (error) {
         console.error("LOGIN ERROR:", error);

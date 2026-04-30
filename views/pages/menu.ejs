@@ -303,21 +303,24 @@
 
 <script>
   function addToCart(item) {
-  let cart = JSON.parse(localStorage.getItem("rokaCart")) || [];
+  const cart = JSON.parse(localStorage.getItem("rokaCart")) || [];
+  const product = {
+    _id: item.dataset.id,
+    name: item.dataset.name,
+    price: Number(item.dataset.price) || 0,
+    image: item.dataset.image || "",
+    qty: 1,
+  };
 
-  const existing = cart.find(i => i.name === item.name);
+  const existing = cart.find((i) => i._id === product._id);
 
   if (existing) {
-    existing.quantity += 1;
+    existing.qty = Number(existing.qty || 0) + 1;
   } else {
-    cart.push({
-      ...item,
-      quantity: 1
-    });
+    cart.push(product);
   }
 
   localStorage.setItem("rokaCart", JSON.stringify(cart));
-
   alert("Added to cart");
 }
 </script>

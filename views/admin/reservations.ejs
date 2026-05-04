@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin | Reservations</title>
 
   <style>
@@ -10,67 +11,81 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Arial, sans-serif;
     }
 
     body {
-      background: #f5f7fb;
-      color: #1f2937;
+      background: #f3f4f6;
+      color: #111827;
     }
 
+    /* SIDEBAR */
     .sidebar {
       width: 240px;
       height: 100vh;
-      background: #111827;
+      background: #1e293b;
       color: white;
       position: fixed;
-      left: 0;
-      top: 0;
       padding: 30px 20px;
     }
 
     .sidebar h2 {
-      font-size: 24px;
-      margin-bottom: 35px;
-      text-align: center;
+      font-size: 22px;
+      margin-bottom: 30px;
     }
 
     .sidebar a {
       display: block;
-      color: #d1d5db;
+      padding: 12px;
+      color: #cbd5e1;
       text-decoration: none;
-      padding: 14px 16px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      transition: 0.25s;
-      font-weight: bold;
+      border-radius: 6px;
+      margin-bottom: 8px;
     }
 
-    .sidebar a:hover,
     .sidebar a.active {
-      background: #f59e0b;
-      color: #111827;
+      background: #3b82f6;
+      color: white;
     }
 
+    .sidebar a:hover {
+      background: #334155;
+    }
+
+    /* MAIN */
     .main {
       margin-left: 240px;
-      padding: 35px;
+      padding: 30px;
+    }
+
+    /* HEADER */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
     }
 
     .topbar h1 {
-      font-size: 32px;
-      margin-bottom: 8px;
+      font-size: 28px;
     }
 
     .topbar p {
       color: #6b7280;
-      margin-bottom: 30px;
+      font-size: 14px;
+      margin-top: 5px;
     }
 
+    .admin-user {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    /* TABLE CARD */
     .table-card {
       background: white;
-      border-radius: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
       overflow: hidden;
     }
 
@@ -79,39 +94,34 @@
       border-collapse: collapse;
     }
 
-    th, td {
-      padding: 16px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
+    th,
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
     }
 
     thead {
       background: #f9fafb;
     }
 
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    /* EMPTY */
     .empty-box {
       padding: 40px;
       text-align: center;
       color: #6b7280;
     }
-
-    @media (max-width: 900px) {
-      .sidebar {
-        position: static;
-        width: 100%;
-        height: auto;
-      }
-
-      .main {
-        margin-left: 0;
-      }
-    }
   </style>
 </head>
+
 <body>
 
   <aside class="sidebar">
-    <h2>ROKA Admin</h2>
+    <h2>ROKA Control</h2>
     <a href="/admin">Dashboard</a>
     <a href="/admin/orders">Orders</a>
     <a href="/admin/reservations" class="active">Reservations</a>
@@ -119,41 +129,63 @@
   </aside>
 
   <main class="main">
+
     <div class="topbar">
-      <h1>Reservations</h1>
-      <p>Manage customer table reservations.</p>
+      <div>
+        <h1>Reservations</h1>
+        <p>Manage customer reservations.</p>
+      </div>
+
+      <div class="admin-user">
+        Beyza Tatlıdil • Online
+      </div>
     </div>
 
     <div class="table-card">
-      <% if (!reservations || reservations.length === 0) { %>
+
+      <% if (!reservations || reservations.length===0) { %>
         <div class="empty-box">
           <h3>No reservations found</h3>
-          <p>Customer reservations will appear here.</p>
+          <p>New reservations will appear here.</p>
         </div>
-      <% } else { %>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Phone</th>
-              <th>Date</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% reservations.forEach(reservation => { %>
+        <% } else { %>
+
+          <table>
+            <thead>
               <tr>
-                <td><%= reservation.name || "No Name" %></td>
-                <td><%= reservation.phone || "No Phone" %></td>
-                <td><%= reservation.date || "No Date" %></td>
-                <td><%= reservation.time || "No Time" %></td>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Date</th>
+                <th>Time</th>
               </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      <% } %>
+            </thead>
+
+            <tbody>
+              <% reservations.forEach(reservation=> { %>
+                <tr>
+                  <td>
+                    <%= reservation.name %>
+                  </td>
+                  <td>
+                    <%= reservation.phone %>
+                  </td>
+                  <td>
+                    <%= reservation.date %>
+                  </td>
+                  <td>
+                    <%= reservation.time %>
+                  </td>
+                </tr>
+                <% }) %>
+            </tbody>
+          </table>
+
+          <% } %>
+
     </div>
+
   </main>
 
 </body>
+
 </html>

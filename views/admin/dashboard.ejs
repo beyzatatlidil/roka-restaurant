@@ -1,157 +1,175 @@
-<script>
-const token = localStorage.getItem("token");
+<%- include('../partials/adminHeader') %>
+  <script>
+    const token = localStorage.getItem("token");
 
-if (!token) {
-  window.location.href = "/admin/login";
-}
-</script>
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin | Dashboard</title>
-
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
+    if (!token) {
+      window.location.href = "/admin/login";
     }
+  </script>
 
-    body {
-      background: #f5f7fb;
-      color: #1f2937;
-    }
 
-    .sidebar {
-      width: 240px;
-      height: 100vh;
-      background: #111827;
-      color: white;
-      position: fixed;
-      left: 0;
-      top: 0;
-      padding: 30px 20px;
-    }
+  <!DOCTYPE html>
+  <html lang="en">
 
-    .sidebar h2 {
-      font-size: 24px;
-      margin-bottom: 35px;
-      text-align: center;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin | Dashboard</title>
 
-    .sidebar a {
-      display: block;
-      color: #d1d5db;
-      text-decoration: none;
-      padding: 14px 16px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      transition: 0.25s;
-      font-weight: bold;
-    }
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
 
-    .sidebar a:hover,
-    .sidebar a.active {
-      background: #f59e0b;
-      color: #111827;
-    }
+      body {
+        background: #f3f4f6;
+        color: #111827;
+      }
 
-    .main {
-      margin-left: 240px;
-      padding: 35px;
-    }
-
-    .topbar h1 {
-      font-size: 32px;
-      margin-bottom: 8px;
-    }
-
-    .topbar p {
-      color: #6b7280;
-      margin-bottom: 30px;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 18px;
-      padding: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-    }
-
-    .card h3 {
-      color: #6b7280;
-      font-size: 15px;
-      margin-bottom: 12px;
-    }
-
-    .number {
-      font-size: 34px;
-      font-weight: bold;
-      color: #111827;
-    }
-
-    @media (max-width: 900px) {
       .sidebar {
-        position: static;
-        width: 100%;
-        height: auto;
+        width: 240px;
+        height: 100vh;
+        background: #1e293b;
+        color: white;
+        position: fixed;
+        padding: 30px 20px;
+      }
+
+      .sidebar h2 {
+        font-size: 22px;
+        margin-bottom: 30px;
+      }
+
+      .sidebar a {
+        display: block;
+        padding: 12px;
+        color: #cbd5e1;
+        text-decoration: none;
+        border-radius: 6px;
+        margin-bottom: 8px;
+      }
+
+      .sidebar a.active {
+        background: #3b82f6;
+        color: white;
+      }
+
+      .sidebar a:hover {
+        background: #334155;
       }
 
       .main {
-        margin-left: 0;
+        margin-left: 240px;
+        padding: 30px;
       }
-    }
-  </style>
-</head>
-<body>
 
-  <aside class="sidebar">
-    <h2>ROKA Admin</h2>
-    <a href="/admin" class="active">Dashboard</a>
-    <a href="/admin/orders">Orders</a>
-    <a href="/admin/reservations">Reservations</a>
-    <a href="/admin/menu">Menu</a>
-  </aside>
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
 
-  <main class="main">
-    <div class="topbar">
-      <h1>Dashboard</h1>
-      <p>Overview of your restaurant management system.</p>
-    </div>
+      .topbar h1 {
+        font-size: 28px;
+      }
 
-    <div class="cards">
-      <div class="card">
-        <h3>Users</h3>
-        <div class="number"><%= userCount %></div>
+      .topbar p {
+        color: #6b7280;
+        font-size: 14px;
+        margin-top: 6px;
+      }
+
+      .admin-user {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .stat-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 22px;
+      }
+
+      .stat-card h3 {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 12px;
+      }
+
+      .stat-card p {
+        font-size: 32px;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <aside class="sidebar">
+      <h2>ROKA Control</h2>
+      <a href="/admin" class="active">Dashboard</a>
+      <a href="/admin/orders">Orders</a>
+      <a href="/admin/reservations">Reservations</a>
+      <a href="/admin/menu">Menu</a>
+    </aside>
+
+    <main class="main">
+
+      <div class="topbar">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Overview of your restaurant management system.</p>
+        </div>
+
+        <div class="admin-user">
+          Beyza Tatlıdil • Online
+        </div>
       </div>
 
-      <div class="card">
-        <h3>Orders</h3>
-        <div class="number"><%= orderCount %></div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>Users</h3>
+          <p>
+            <%= userCount %>
+          </p>
+        </div>
+
+        <div class="stat-card">
+          <h3>Orders</h3>
+          <p>
+            <%= orderCount %>
+          </p>
+        </div>
+
+        <div class="stat-card">
+          <h3>Reservations</h3>
+          <p>
+            <%= reservationCount %>
+          </p>
+        </div>
+
+        <div class="stat-card">
+          <h3>Menu Items</h3>
+          <p>
+            <%= menuCount %>
+          </p>
+        </div>
       </div>
 
-      <div class="card">
-        <h3>Reservations</h3>
-        <div class="number"><%= reservationCount %></div>
-      </div>
+    </main>
 
-      <div class="card">
-        <h3>Menu Items</h3>
-        <div class="number"><%= menuCount %></div>
-      </div>
-    </div>
-  </main>
+  </body>
 
-</body>
-</html>
+  </html>

@@ -1,23 +1,212 @@
-<button id="chatbot-toggle">💬</button>
+```html
+<style>
+  .chat-container {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 360px;
+    height: 520px;
+    background: #0b0f1a;
+    border-radius: 18px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+    font-family: 'Segoe UI', sans-serif;
+  }
 
-<div id="chatbot-box">
-  <div class="chatbot-header">
-    <span>Roka Assistant</span>
-    <button id="chatbot-close">×</button>
+  /* HEADER */
+  .chat-header {
+    background: #111827;
+    color: white;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* MESSAGES */
+  .chat-messages {
+    flex: 1;
+    padding: 14px;
+    overflow-y: auto;
+  }
+
+  /* MESSAGE BUBBLES */
+  .msg {
+    max-width: 80%;
+    padding: 12px 14px;
+    border-radius: 14px;
+    margin: 8px 0;
+    font-size: 15px;
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+
+  .user {
+    background: #f59e0b;
+    color: black;
+    margin-left: auto;
+  }
+
+  .bot {
+    background: #1f2937;
+    color: white;
+  }
+
+  /* INPUT */
+  .chat-input {
+    display: flex;
+    border-top: 1px solid #222;
+  }
+
+  .chat-input textarea {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    outline: none;
+    resize: none;
+    background: #0b0f1a;
+    color: white;
+    font-size: 15px;
+  }
+
+  .chat-input button {
+    background: #f59e0b;
+    border: none;
+    padding: 0 18px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+</style>
+
+<div class="chat-container" id="chatBox">
+  <div class="chat-header">
+    Roka Assistant
+    <span onclick="toggleChat()" style="cursor:pointer;">✖</span>
   </div>
 
-  <div id="chatbot-messages">
-    <div class="chat-message bot">
-      <div class="chat-bubble">
-        Hello 👋 I am Roka Assistant.
-      </div>
-    </div>
-  </div>
+  <div class="chat-messages" id="messages"></div>
 
-  <div class="chatbot-input-area">
-    <input id="chatbot-input" type="text" placeholder="Ask something..." />
-    <button id="chatbot-send">Send</button>
+  <div class="chat-input">
+    <textarea id="chatInput" rows="1" placeholder="Mesaj yaz..."></textarea>
+    <button onclick="sendMessage()">Gönder</button>
   </div>
 </div>
 
-<script src="/js/chatbot.js"></script>
+<!-- FLOAT BUTTON -->
+<div onclick="toggleChat()" style="
+position: fixed;
+bottom: 20px;
+right: 20px;
+background: #f59e0b;
+width: 65px;
+height: 65px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+font-size: 26px;
+box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+">
+  💬
+</div>
+
+<script>
+  const messages = document.getElementById("messages");
+  const input = document.getElementById("chatInput");
+
+  /* TOGGLE */
+  function toggleChat() {
+    const chat = document.getElementById("chatBox");
+    chat.style.display =
+      chat.style.display === "flex" ? "none" : "flex";
+  }
+
+  /* ADD MESSAGE */
+  function addMessage(text, type) {
+    const div = document.createElement("div");
+    div.className = "msg " + type;
+    div.innerText = text;
+    messages.appendChild(div);
+
+    saveMessage(text, type);
+    scrollBottom();
+  }
+
+  /* SCROLL */
+  function scrollBottom() {
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  /* TYPING */
+  function showTyping() {
+    const div = document.createElement("div");
+    div.className = "msg bot";
+    div.id = "typing";
+    div.innerText = "...";
+    messages.appendChild(div);
+    scrollBottom();
+  }
+
+  function removeTyping() {
+    const t = document.getElementById("typing");
+    if (t) t.remove();
+  }
+
+  /* ENTER SEND */
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  /* LOCAL STORAGE */
+  function saveMessage(text, type) {
+    const chat = JSON.parse(localStorage.getItem("rokaChat")) || [];
+    chat.push({ text, type });
+    localStorage.setItem("rokaChat", JSON.stringify(chat));
+  }
+
+  function loadMessages() {
+    const chat = JSON.parse(localStorage.getItem("rokaChat")) || [];
+    chat.forEach(m => addMessage(m.text, m.type));
+  }
+
+  /* SEND */
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMessage(text, "user");
+    input.value = "";
+
+    showTyping();
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: text })
+      });
+
+      const data = await res.json();
+
+      removeTyping();
+      addMessage(data.reply || "Cevap alınamadı", "bot");
+
+    } catch (err) {
+      removeTyping();
+      addMessage("⚠️ Sunucuya bağlanılamıyor", "bot");
+    }
+  }
+
+  /* INIT */
+  loadMessages();
+</script>
+```

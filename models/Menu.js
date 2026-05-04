@@ -28,6 +28,10 @@ const menuSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    isVegetarian: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );

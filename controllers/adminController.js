@@ -53,11 +53,12 @@ const getAdminReservationsPage = async (req, res) => {
 // Menu list
 const getAdminMenuPage = async (req, res) => {
   try {
-    const menuItems = await Menu.find().sort({ createdAt: -1 });
-    res.render("admin/menu", { menuItems: menuItems || [] });
-  } catch (error) {
-    console.log("ADMIN MENU PAGE ERROR:", error);
-    res.render("admin/menu", { menuItems: [] });
+    const items = await Menu.find();
+
+    res.render("admin/menu", { items }); // 🔥 BURASI KRİTİK
+  } catch (err) {
+    console.error(err);
+    res.send("Error loading menu");
   }
 };
 
@@ -74,11 +75,11 @@ const getNewMenuPage = async (req, res) => {
 // Create menu item
 const createMenuItem = async (req, res) => {
   try {
-      const { name, description, price, category, image } = req.body;
+    const { name, description, price, category, image } = req.body;
 
-      const imageUrl = image && image.trim() !== ""
-        ? image
-        : "https://via.placeholder.com/300x200?text=Food";
+    const imageUrl = image && image.trim() !== ""
+      ? image
+      : "https://via.placeholder.com/300x200?text=Food";
 
     await Menu.create({
       name,

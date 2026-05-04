@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin | Orders</title>
 
   <style>
@@ -10,99 +11,129 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Arial, sans-serif;
     }
 
     body {
-      background: #f5f7fb;
-      color: #1f2937;
+      background: #f3f4f6;
+      color: #111827;
     }
 
+    /* SIDEBAR */
     .sidebar {
       width: 240px;
       height: 100vh;
-      background: #111827;
+      background: #1e293b;
       color: white;
       position: fixed;
-      left: 0;
-      top: 0;
       padding: 30px 20px;
     }
 
     .sidebar h2 {
-      font-size: 24px;
-      margin-bottom: 35px;
-      text-align: center;
+      font-size: 22px;
+      margin-bottom: 30px;
     }
 
     .sidebar a {
       display: block;
-      color: #d1d5db;
+      padding: 12px;
+      color: #cbd5e1;
       text-decoration: none;
-      padding: 14px 16px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      transition: 0.25s;
-      font-weight: bold;
+      border-radius: 6px;
+      margin-bottom: 8px;
     }
 
-    .sidebar a:hover,
     .sidebar a.active {
-      background: #f59e0b;
-      color: #111827;
+      background: #3b82f6;
+      color: white;
     }
 
+    .sidebar a:hover {
+      background: #334155;
+    }
+
+    /* MAIN */
     .main {
       margin-left: 240px;
-      padding: 35px;
+      padding: 30px;
+    }
+
+    /* HEADER */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
     }
 
     .topbar h1 {
-      font-size: 32px;
-      margin-bottom: 8px;
+      font-size: 28px;
     }
 
     .topbar p {
       color: #6b7280;
-      margin-bottom: 30px;
+      font-size: 14px;
     }
 
+    /* USER */
+    .user-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
+
+    .name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .role {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    /* CARD */
     .table-card {
       background: white;
-      border-radius: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-      overflow-x: auto;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
     }
 
+    /* TABLE */
     table {
       width: 100%;
       border-collapse: collapse;
     }
 
-    th, td {
-      padding: 16px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-      vertical-align: middle;
+    th,
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
     }
 
     thead {
       background: #f9fafb;
     }
 
-    .empty-box {
-      padding: 40px;
-      text-align: center;
-      color: #6b7280;
+    /* HOVER */
+    tbody tr:hover {
+      background: #f9fafb;
     }
 
+    /* STATUS */
     .status-badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: bold;
-      text-transform: capitalize;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
     }
 
     .pending {
@@ -130,53 +161,45 @@
       color: #991b1b;
     }
 
+    /* ACTION */
     .status-form {
       display: flex;
       gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
     }
 
     .status-form select {
-      padding: 8px 10px;
+      padding: 6px;
+      border-radius: 6px;
       border: 1px solid #d1d5db;
-      border-radius: 8px;
-      background: white;
-      cursor: pointer;
     }
 
     .status-form button {
-      padding: 8px 12px;
-      border: none;
-      border-radius: 8px;
       background: #111827;
       color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
       cursor: pointer;
-      font-weight: bold;
     }
 
     .status-form button:hover {
-      background: #f59e0b;
-      color: #111827;
+      background: #3b82f6;
     }
 
-    @media (max-width: 900px) {
-      .sidebar {
-        position: static;
-        width: 100%;
-        height: auto;
-      }
-
-      .main {
-        margin-left: 0;
-      }
+    /* EMPTY */
+    .empty-box {
+      padding: 40px;
+      text-align: center;
+      color: #6b7280;
     }
   </style>
 </head>
+
 <body>
 
   <aside class="sidebar">
-    <h2>ROKA Admin</h2>
+    <h2>ROKA Control</h2>
     <a href="/admin">Dashboard</a>
     <a href="/admin/orders" class="active">Orders</a>
     <a href="/admin/reservations">Reservations</a>
@@ -184,64 +207,78 @@
   </aside>
 
   <main class="main">
-    <div class="topbar">
-      <h1>Orders</h1>
-      <p>Track and manage incoming customer orders.</p>
-    </div>
 
-    <div class="table-card">
-      <% if (!orders || orders.length === 0) { %>
-        <div class="empty-box">
-          <h3>No orders found</h3>
-          <p>New customer orders will appear here.</p>
-        </div>
-      <% } else { %>
-        <table>
-          <thead>
-            <tr>
-              <th>Total Price</th>
-              <th>Status</th>
-              <th>Address</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% orders.forEach(order => { %>
-              <tr>
-                <td><%= order.totalPrice || 0 %> TL</td>
+    <%- include("../partials/adminHeader", { title: "Orders" , subtitle: "Track and manage incoming customer orders." })
+      %>
 
-                <td>
-                  <span class="status-badge
-                    <%= order.status === 'pending' ? 'pending' : '' %>
-                    <%= order.status === 'preparing' ? 'preparing' : '' %>
-                    <%= order.status === 'out for delivery' ? 'out-for-delivery' : '' %>
-                    <%= order.status === 'delivered' ? 'delivered' : '' %>
-                    <%= order.status === 'cancelled' ? 'cancelled' : '' %>">
-                    <%= order.status || "pending" %>
-                  </span>
-                </td>
+      <div class="table-card">
+        <% if (!orders || orders.length===0) { %>
+          <div class="empty-box">
+            <h3>No orders found</h3>
+            <p>New customer orders will appear here.</p>
+          </div>
+          <% } else { %>
 
-                <td><%= order.deliveryAddress || "No Address" %></td>
+            <table>
+              <thead>
+                <tr>
+                  <th>Total Price</th>
+                  <th>Status</th>
+                  <th>Address</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
 
-                <td>
-                  <form action="/admin/orders/<%= order._id %>/status" method="POST" class="status-form">
-                    <select name="status">
-                      <option value="pending" <%= order.status === "pending" ? "selected" : "" %>>Pending</option>
-                      <option value="preparing" <%= order.status === "preparing" ? "selected" : "" %>>Preparing</option>
-                      <option value="out for delivery" <%= order.status === "out for delivery" ? "selected" : "" %>>Out for Delivery</option>
-                      <option value="delivered" <%= order.status === "delivered" ? "selected" : "" %>>Delivered</option>
-                      <option value="cancelled" <%= order.status === "cancelled" ? "selected" : "" %>>Cancelled</option>
-                    </select>
-                    <button type="submit">Update</button>
-                  </form>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      <% } %>
-    </div>
+              <tbody>
+                <% orders.forEach(order=> { %>
+                  <tr>
+                    <td>
+                      <%= order.totalPrice || 0 %> TL
+                    </td>
+
+                    <td>
+                      <span class="status-badge
+              <%= order.status === 'pending' ? 'pending' : '' %>
+              <%= order.status === 'preparing' ? 'preparing' : '' %>
+              <%= order.status === 'out for delivery' ? 'out-for-delivery' : '' %>
+              <%= order.status === 'delivered' ? 'delivered' : '' %>
+              <%= order.status === 'cancelled' ? 'cancelled' : '' %>">
+                        <%= order.status || "pending" %>
+                      </span>
+                    </td>
+
+                    <td>
+                      <%= order.deliveryAddress || "No Address" %>
+                    </td>
+
+                    <td>
+                      <form action="/admin/orders/<%= order._id %>/status" method="POST" class="status-form">
+                        <select name="status">
+                          <option value="pending" <%=order.status==="pending" ? "selected" : "" %>>Pending</option>
+                          <option value="preparing" <%=order.status==="preparing" ? "selected" : "" %>>Preparing
+                          </option>
+                          <option value="out for delivery" <%=order.status==="out for delivery" ? "selected" : "" %>
+                            >Out
+                            for Delivery</option>
+                          <option value="delivered" <%=order.status==="delivered" ? "selected" : "" %>>Delivered
+                          </option>
+                          <option value="cancelled" <%=order.status==="cancelled" ? "selected" : "" %>>Cancelled
+                          </option>
+                        </select>
+                        <button type="submit">Update</button>
+                      </form>
+                    </td>
+                  </tr>
+                  <% }) %>
+              </tbody>
+
+            </table>
+
+            <% } %>
+      </div>
+
   </main>
 
 </body>
+
 </html>

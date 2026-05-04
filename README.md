@@ -1,155 +1,139 @@
-# Roka Restaurant API
+# 🍽️ Roka Restaurant
 
-Backend for a restaurant reservation and online ordering system.
+A full-stack restaurant web application with online ordering, reservations, and an AI-powered assistant.
 
-Live Demo:  
-https://roka-restaurant-9bzp.onrender.com
-
-This project provides a RESTful backend for managing restaurant reservations, online orders, menu items, and user authentication. It also includes a chatbot assistant that helps customers with menu information and reservation questions.
-
----
-
-# Features
-
-- JWT-based authentication system
-- Role-based access control (Customer / Manager)
-- Online ordering system
-- Reservation management
-- Admin panel for menu management
-- Chatbot assistant for menu and reservation queries
-- RESTful API architecture
-- Cloud database integration with MongoDB Atlas
-- Dockerized backend setup
-- Deployment on Render
-
----
-
-# Tech Stack
-
-Backend  
-- Node.js  
-- Express.js  
-
-Database  
-- MongoDB Atlas  
-
-Frontend Rendering  
-- EJS  
-
-Infrastructure  
-- Docker  
-- Render  
-
-Authentication  
-- JSON Web Token (JWT)
-
----
-
-# Live Deployment
-
-The backend is deployed on Render and connected to MongoDB Atlas.
-
-Production URL
-
+🚀 Live Demo
 https://roka-restaurant-9bzp.onrender.com
 
 ---
 
-# API Endpoints
+## ✨ Features
 
-## Authentication
-
-Register user
-
-POST /api/auth/register
-
-Login
-
-POST /api/auth/login
-
----
-
-## Orders
-
-Create order
-
-POST /api/orders
-
-Get user orders
-
-GET /api/orders/myorders
+* 🍽️ Interactive Menu Page (dynamic rendering with EJS)
+* 🛒 Cart & Checkout system (localStorage + backend integration)
+* 📅 Reservation system (guest & authenticated users)
+* 🔐 JWT-based authentication & role-based authorization
+* 👨‍🍳 Admin panel for menu & order management (protected routes)
+* 🤖 AI-powered chatbot assistant (StackAI integration)
+* 📦 RESTful API architecture
+* ☁️ Cloud database with MongoDB Atlas
+* 🐳 Dockerized backend
+* 🚀 Deployed on Render
 
 ---
 
-## Reservations
+## 🤖 Roka Assistant (AI Chatbot)
 
-Create reservation
+Roka includes an AI-powered assistant that helps users interact with the system.
 
-POST /api/reservations
+### 💬 You can ask:
 
-Get user reservations
+* "What are the most popular dishes?"
+* "Do you have vegetarian options?"
+* "What are your prices?"
+* "Can I make a reservation?"
+* "What are your opening hours?"
+* "What do you recommend?"
 
-GET /api/reservations/myreservations
-
----
-
-## Menu
-
-Get menu items
-
-GET /api/menu
-
-Add menu item (admin)
-
-POST /api/menu
+The chatbot enhances the user experience by providing instant responses and guidance.
 
 ---
 
-# Chatbot Assistant
+## 🛠️ Tech Stack
 
-The system integrates a chatbot built using StackAI to assist users with:
+### Backend
 
-- Menu information
-- Reservation questions
-- Basic navigation of the ordering system
+* Node.js
+* Express.js
 
-The chatbot improves the user experience by helping customers quickly find relevant information.
+### Frontend
+
+* EJS (Server-side rendering)
+* Vanilla JavaScript
+* CSS
+
+### Database
+
+* MongoDB Atlas
+
+### Infrastructure
+
+* Docker
+* Render
+
+### Authentication
+
+* JSON Web Token (JWT)
 
 ---
 
-# Docker Setup
+## 📸 Screenshots
 
-This project supports running the backend inside a Docker container.
+*Add your screenshots here for better presentation*
 
-Build the Docker image
+Example:
+
+![Home](./public/images/home.png)
+
+---
+
+## 🌐 Live Deployment
+
+The application is deployed on Render:
+
+👉 https://roka-restaurant-9bzp.onrender.com
+
+---
+
+## 📡 API Endpoints
+
+### Authentication
+
+* POST `/api/auth/register`
+* POST `/api/auth/login`
+
+### Orders
+
+* POST `/api/orders`
+* GET `/api/orders/myorders`
+
+### Reservations
+
+* POST `/api/reservations`
+* GET `/api/reservations/myreservations`
+
+### Menu
+
+* GET `/api/menu`
+* POST `/api/menu` (admin)
+
+---
+
+## 🐳 Docker Setup
+
+Build the image:
 
 ```bash
 docker build -t roka-restaurant .
 ```
 
-Run the container
+Run container:
 
 ```bash
 docker run -p 3000:3000 roka-restaurant
 ```
 
-Then open:
-
-```
-http://localhost:3000
-```
-
 ---
 
-# Local Development
+## 💻 Local Development
 
-Install dependencies
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-Run development server
+Run server:
 
 ```bash
 npm run dev
@@ -157,26 +141,24 @@ npm run dev
 
 ---
 
-# Project Status
+## 🚧 Project Status
 
-The project is currently live and functional.  
-New improvements are planned to expand the system.
-
----
-
-# Future Improvements
-
-Planned features for the next versions:
-
-- Swagger API documentation
-- Payment system integration (Stripe test environment)
-- Improved admin dashboard
-- Order status tracking
-- API rate limiting
-- Better chatbot responses
+The project is actively developed and continuously improved.
 
 ---
 
-# Author
+## 🔮 Future Improvements
 
-Beyza Tatlıdil
+* 💳 Payment integration (Stripe)
+* 📊 Advanced admin dashboard
+* 📦 Order tracking system
+* 📄 Swagger API documentation
+* ⚡ Performance optimization
+* 🤖 Smarter chatbot responses
+
+---
+
+## 👩‍💻 Author
+
+**Beyza Tatlıdil**
+

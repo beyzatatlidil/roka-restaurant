@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -82,15 +83,15 @@
       border-radius: 28px;
       overflow: hidden;
       position: relative;
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
     }
 
     .luxury-panel::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(8,10,14,0.88), rgba(8,10,14,0.08));
+      background: linear-gradient(to top, rgba(8, 10, 14, 0.88), rgba(8, 10, 14, 0.08));
     }
 
     .luxury-card {
@@ -102,14 +103,14 @@
       padding: 24px;
       border-radius: 22px;
       background: rgba(10, 12, 18, 0.62);
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(18px);
     }
 
     .luxury-badge {
       display: inline-block;
       color: #d7a76c;
-      border: 1px solid rgba(215,167,108,0.45);
+      border: 1px solid rgba(215, 167, 108, 0.45);
       padding: 8px 14px;
       border-radius: 999px;
       font-weight: 700;
@@ -129,8 +130,8 @@
     }
 
     .signature-card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 26px;
       padding: 24px;
       overflow: hidden;
@@ -174,6 +175,7 @@
         <a href="/my-orders">My Orders</a>
         <a href="/my-reservations">My Reservations</a>
         <a href="/login">Login</a>
+        <button onclick="logout()" style="margin-left:10px;">Logout</button>
       </div>
     </div>
   </nav>
@@ -215,15 +217,12 @@
         </div>
 
         <div class="hero-visual fade-in">
-          <div
-            class="luxury-panel"
-            style="
+          <div class="luxury-panel" style="
               background:
                 linear-gradient(rgba(12,14,18,0.1), rgba(12,14,18,0.4)),
                 url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1400&q=90')
                 center/cover no-repeat;
-            "
-          >
+            ">
             <div class="luxury-card">
               <span class="luxury-badge">ROKA Experience</span>
               <h4>Designed for evenings that feel special.</h4>
@@ -247,10 +246,8 @@
     <section class="signature-section">
       <div class="signature-grid">
         <div class="signature-card fade-in">
-          <img
-            src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1300&q=90"
-            alt="Signature dish"
-          />
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1300&q=90"
+            alt="Signature dish" />
 
           <h3>Chef’s Signature Plates</h3>
           <p>
@@ -308,5 +305,13 @@
 
     elements.forEach((el) => observer.observe(el));
   </script>
+  <script>
+    function logout() {
+      localStorage.clear();
+      alert("Çıkış yapıldı");
+      window.location.href = "/";
+    }
+  </script>
 </body>
+
 </html>

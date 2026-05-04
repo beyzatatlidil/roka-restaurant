@@ -13,4 +13,8 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/profile", protect, getProfile);
 
+router.get("/profile", protect, (req, res) => {
+  res.json(req.user);
+});
+
 module.exports = router;

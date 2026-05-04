@@ -61,190 +61,187 @@
       <textarea id="address" placeholder="Address"></textarea>
 
       <h3>Payment Method</h3>
-      <select id="payment">
-        <option>Cash on Delivery</option>
-        <option>Card on Delivery</option>
-        <option>Demo Online Payment</option>
-      </select>
+      <div class="payment-option">
+        ✔ Cash on Delivery
+      </div>
+
+      <!-- RIGHT -->
+      <div class="box">
+        <h2>Order Summary</h2>
+
+        <div id="summary"></div>
+
+        <h3 id="total"></h3>
+
+        <button onclick="placeOrder()">Place Order</button>
+      </div>
+
     </div>
 
-    <!-- RIGHT -->
-    <div class="box">
-      <h2>Order Summary</h2>
+    <script>
+      (async function () {
+        const token = localStorage.getItem("token");
 
-      <div id="summary"></div>
-
-      <h3 id="total"></h3>
-
-      <button onclick="placeOrder()">Place Order</button>
-    </div>
-
-  </div>
-
-  <script>
-    (async function () {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        alert("Sipariş vermek için giriş yapmalısınız");
-        return window.location.href = "/login?redirect=/checkout";
-      }
-
-      try {
-        const res = await fetch("/api/auth/profile", {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        });
-
-        if (!res.ok) {
-          localStorage.removeItem("token");
-          alert("Oturum süresi dolmuş, tekrar giriş yapın");
+        if (!token) {
+          alert("Sipariş vermek için giriş yapmalısınız");
           return window.location.href = "/login?redirect=/checkout";
         }
 
-      } catch (err) {
-        console.error(err);
-        alert("Bağlantı hatası");
-        window.location.href = "/login";
-      }
-    })();
+        try {
+          const res = await fetch("/api/auth/profile", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          });
 
-    const CART_KEY = "rokaCart";
-    const API_URL = "/api/orders";
+          if (!res.ok) {
+            localStorage.removeItem("token");
+            alert("Oturum süresi dolmuş, tekrar giriş yapın");
+            return window.location.href = "/login?redirect=/checkout";
+          }
 
-    function getToken() {
-      const token = localStorage.getItem("token");
-      if (!token || token === "undefined" || token === "null") {
-        return null;
-      }
-      return token;
-    }
+        } catch (err) {
+          console.error(err);
+          alert("Bağlantı hatası");
+          window.location.href = "/login";
+        }
+      })();
 
-    function getCart() {
-      try {
-        return JSON.parse(localStorage.getItem(CART_KEY)) || [];
-      } catch (error) {
-        localStorage.removeItem(CART_KEY);
-        return [];
-      }
-    }
+      const CART_KEY = "rokaCart";
+      const API_URL = "/api/orders";
 
-    function loadSummary() {
-      const cart = getCart();
-
-      if (cart.length === 0) {
-        document.getElementById("summary").innerHTML = "<p>Your cart is empty</p>";
-        document.getElementById("total").innerText = "";
-        return;
+      function getToken() {
+        const token = localStorage.getItem("token");
+        if (!token || token === "undefined" || token === "null") {
+          return null;
+        }
+        return token;
       }
 
-      let subtotal = 0;
+      function getCart() {
+        try {
+          return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+        } catch (error) {
+          localStorage.removeItem(CART_KEY);
+          return [];
+        }
+      }
 
-      document.getElementById("summary").innerHTML = cart.map(item => {
-        const qty = Number(item.qty || item.quantity || 1);
-        const price = Number(item.price) || 0;
-        const itemTotal = price * qty;
-        subtotal += itemTotal;
+      function loadSummary() {
+        const cart = getCart();
 
-        return `
+        if (cart.length === 0) {
+          document.getElementById("summary").innerHTML = "<p>Your cart is empty</p>";
+          document.getElementById("total").innerText = "";
+          return;
+        }
+
+        let subtotal = 0;
+
+        document.getElementById("summary").innerHTML = cart.map(item => {
+          const qty = Number(item.qty || item.quantity || 1);
+          const price = Number(item.price) || 0;
+          const itemTotal = price * qty;
+          subtotal += itemTotal;
+
+          return `
   <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
     <span>${item.name} x ${qty}</span>
     <span>${itemTotal} TL</span>
   </div>
   `;
-      }).join("");
+        }).join("");
 
-      const deliveryFee = 40;
-      const serviceFee = 10;
-      const total = subtotal + deliveryFee + serviceFee;
+        const deliveryFee = 40;
+        const serviceFee = 10;
+        const total = subtotal + deliveryFee + serviceFee;
 
-      document.getElementById("summary").innerHTML += `
+        document.getElementById("summary").innerHTML += `
   <hr style="margin:10px 0">
   <p>Subtotal: ${subtotal} TL</p>
   <p>Delivery: ${deliveryFee} TL</p>
   <p>Service Fee: ${serviceFee} TL</p>
   `;
 
-      document.getElementById("total").innerText = "Total: " + total + " TL";
-    }
-
-
-    async function placeOrder() {
-      const token = getToken();
-      if (!token) {
-        alert("Sipariş vermek için giriş yapmalısınız");
-        window.location.href = "/login?redirect=/checkout";
-        return;
+        document.getElementById("total").innerText = "Total: " + total + " TL";
       }
 
-      const name = document.getElementById("name").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const address = document.getElementById("address").value.trim();
-      const cart = getCart();
 
-      if (cart.length === 0) {
-        alert("Cart is empty!");
-        return;
-      }
-
-      if (!name || !phone || !address) {
-        alert("Please fill all fields");
-        return;
-      }
-
-      const normalizedCart = cart.map((item) => ({
-        _id: item._id,
-        name: item.name || "Menu Item",
-        price: Number(item.price) || 0,
-        image: item.image || "",
-        qty: Number(item.qty || item.quantity || 1),
-      }));
-
-      const subtotal = normalizedCart.reduce(
-        (sum, item) => sum + item.price * item.qty,
-        0
-      );
-      const totalPrice = subtotal + 40 + 10;
-
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + token,
-          },
-          body: JSON.stringify({
-            items: normalizedCart,
-            totalPrice,
-            deliveryAddress: address,
-            phone,
-          }),
-        });
-
-        if (response.status === 401) {
+      async function placeOrder() {
+        const token = getToken();
+        if (!token) {
           alert("Sipariş vermek için giriş yapmalısınız");
           window.location.href = "/login?redirect=/checkout";
           return;
         }
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          alert(errorData.message || "Order could not be created");
+        const name = document.getElementById("name").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const address = document.getElementById("address").value.trim();
+        const cart = getCart();
+
+        if (cart.length === 0) {
+          alert("Cart is empty!");
           return;
         }
 
-        localStorage.removeItem(CART_KEY);
-        alert("Order placed successfully!");
-        window.location.href = "/my-orders";
-      } catch (error) {
-        console.error(error);
-        alert("Network error. Please try again.");
-      }
-    }
+        if (!name || !phone || !address) {
+          alert("Please fill all fields");
+          return;
+        }
 
-    loadSummary();
-  </script>
+        const normalizedCart = cart.map((item) => ({
+          _id: item._id,
+          name: item.name || "Menu Item",
+          price: Number(item.price) || 0,
+          image: item.image || "",
+          qty: Number(item.qty || item.quantity || 1),
+        }));
+
+        const subtotal = normalizedCart.reduce(
+          (sum, item) => sum + item.price * item.qty,
+          0
+        );
+        const totalPrice = subtotal + 40 + 10;
+
+        try {
+          const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + token,
+            },
+            body: JSON.stringify({
+              items: normalizedCart,
+              totalPrice,
+              deliveryAddress: address,
+              phone,
+            }),
+          });
+
+          if (response.status === 401) {
+            alert("Sipariş vermek için giriş yapmalısınız");
+            window.location.href = "/login?redirect=/checkout";
+            return;
+          }
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            alert(errorData.message || "Order could not be created");
+            return;
+          }
+
+          localStorage.removeItem(CART_KEY);
+          alert("Order placed successfully!");
+          window.location.href = "/my-orders";
+        } catch (error) {
+          console.error(error);
+          alert("Network error. Please try again.");
+        }
+      }
+
+      loadSummary();
+    </script>
 
 </body>
 

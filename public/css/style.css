@@ -745,4 +745,18 @@ body {
   .btn:hover {
     transform: scale(1.1);
   }
+
+  .nav-btn {
+    background: transparent;
+    border: none;
+    color: #000000;
+    /* 🔥 siyah yaptık */
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+
+  .nav-btn {
+    color: black !important;
+  }
 }
